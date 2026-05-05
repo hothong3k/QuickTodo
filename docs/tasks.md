@@ -1,0 +1,24 @@
+# QuickTodo – Task Tracker
+
+- `[x]` Cài đặt dependencies (prisma@6, lucide-react, next-themes)
+- `[x]` Tạo file .env với DATABASE_URL
+- `[x]` Tạo Prisma schema + generate + db push
+- `[x]` Tạo lib/prisma.ts (Prisma Client singleton)
+- `[x]` Tạo types/index.ts
+- `[x]` Tạo server actions (todo-actions.ts)
+- `[x]` Tạo globals.css (theme variables, custom styles)
+- `[x]` Tạo UI components
+  - `[x]` theme-provider.tsx
+  - `[x]` theme-toggle.tsx
+  - `[x]` todo-form.tsx
+  - `[x]` priority-picker.tsx
+  - `[x]` todo-item.tsx
+  - `[x]` todo-list.tsx
+- `[x]` Cập nhật layout.tsx
+- `[x]` Cập nhật page.tsx
+- `[x]` Chạy dev server & kiểm tra ✅
+- `[x]` Cập nhật `globals.css` (pure black background, system tokens)
+- `[x]` Tinh chỉnh `page.tsx` (header typography & spacing)
+- `[x]` Tinh chỉnh `todo-item.tsx` (cleaner card design)
+- `[x]` Tinh chỉnh `todo-form.tsx` (seamless input design)
+- `[x]` Kiểm tra trên cổng 3000
