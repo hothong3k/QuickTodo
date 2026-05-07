@@ -1,4 +1,5 @@
-import { prisma } from "@/lib/prisma";
+import { connectDB } from "@/lib/mongoose";
+import TodoModel from "@/models/Todo";
 import ThemeToggle from "@/components/theme-toggle";
 import TodoForm from "@/components/todo-form";
 import TodoList from "@/components/todo-list";
@@ -6,17 +7,18 @@ import type { Todo } from "@/types";
 
 export default async function Home() {
   // Fetch todos sắp xếp theo priority (cao → thấp) rồi theo ngày tạo (mới nhất trước)
-  const rawTodos = await prisma.todo.findMany({
-    orderBy: [{ priority: "asc" }, { createdAt: "desc" }],
-  });
+  await connectDB();
+  const rawTodos = await TodoModel.find()
+    .sort({ priority: 1, createdAt: -1 })
+    .lean();
 
   // Chuyển đổi sang type Todo cho client component
   const todos: Todo[] = rawTodos.map((t) => ({
-    id: t.id,
+    id: String(t._id),
     title: t.title,
-    isDone: t.isDone,
-    priority: t.priority,
-    createdAt: t.createdAt,
+    isDone: t.isDone ?? false,
+    priority: t.priority ?? 4,
+    createdAt: t.createdAt ?? new Date(),
   }));
 
   return (
