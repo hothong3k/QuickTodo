@@ -8,7 +8,7 @@ The project uses the following technologies:
 
 - **Framework**: [Next.js 16 (App Router)](https://nextjs.org/) - Powerful full-stack React framework.
 - **Language**: [TypeScript](https://www.typescriptlang.org/) - Ensures type safety and clean code.
-- **Database ORM**: [Prisma](https://www.prisma.io/) - Easily connect and manage MongoDB data.
+- **Database ODM**: [Mongoose](https://mongoosejs.com/) - Easily connect and manage MongoDB data.
 - **Database**: [MongoDB](https://www.mongodb.com/) - Flexible NoSQL database.
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) - Utility-first CSS framework for rapid UI design.
 
@@ -27,9 +27,9 @@ The application provides a simple and intuitive workflow:
 The system architecture is built according to the modern Next.js model:
 
 - **Frontend & Backend Unified**: Uses Next.js App Router to combine both the interface and data processing logic into a single project.
-- **Server Components**: Defaults to using Server Components to fetch data from MongoDB via Prisma, optimizing first-page load speed and SEO.
+- **Server Components**: Defaults to using Server Components to fetch data from MongoDB via Mongoose.
 - **Server Actions**: Processes CRUD (Create, Read, Update, Delete) operations directly from the client without going through traditional API endpoints, making the code more concise and secure.
-- **Data Modeling**: Data is stored in MongoDB with a flexible structure, strictly managed by the Prisma Schema.
+- **Data Modeling**: Data is stored in MongoDB with a flexible structure, strictly managed by the Mongoose Schema.
 
 ## System Installation and Deployment Guide
 
@@ -83,15 +83,32 @@ The application can be easily deployed on platforms like Vercel:
 To run the application in development mode:
 
 ```bash
+# npm
 npm run dev
+
+# yarn
+yarn dev
+
+# pnpm
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to experience it.
 
 To build the project for a production environment:
+
 ```bash
+# npm
 npm run build
 npm start
+
+# yarn
+yarn build
+yarn start
+
+# pnpm
+pnpm build
+pnpm start
 ```
 
 ## Notes and Limitations
