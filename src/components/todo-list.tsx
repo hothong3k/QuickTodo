@@ -3,9 +3,19 @@ import type { Todo } from '@/types'
 
 interface TodoListProps {
   todos: Todo[]
+  onToggle: (id: string) => Promise<void>
+  onUpdate: (id: string, title: string) => Promise<void>
+  onDelete: (id: string) => Promise<void>
+  onPriorityChange: (id: string, priority: number) => Promise<void>
 }
 
-export default function TodoList({ todos }: TodoListProps) {
+export default function TodoList({
+  todos,
+  onToggle,
+  onUpdate,
+  onDelete,
+  onPriorityChange,
+}: TodoListProps) {
   if (todos.length === 0) {
     return (
       <div className="flex flex-col items-center py-16 text-center">
@@ -23,7 +33,14 @@ export default function TodoList({ todos }: TodoListProps) {
   return (
     <div className="flex flex-col gap-3">
       {todos.map((todo) => (
-        <TodoItem key={todo.id} todo={todo} />
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          onToggle={onToggle}
+          onUpdate={onUpdate}
+          onDelete={onDelete}
+          onPriorityChange={onPriorityChange}
+        />
       ))}
     </div>
   )
