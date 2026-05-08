@@ -1,21 +1,27 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { addTodo } from '@/actions/todo-actions'
+import { useState } from 'react'
 import { Plus, Loader2, Pencil } from 'lucide-react'
 
-export default function TodoForm() {
+interface TodoFormProps {
+  onAdd: (title: string) => Promise<void>
+}
+
+export default function TodoForm({ onAdd }: TodoFormProps) {
   const [title, setTitle] = useState('')
-  const [isPending, startTransition] = useTransition()
+  const [isPending, setIsPending] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!title.trim()) return
+    if (!title.trim() || isPending) return
 
-    startTransition(async () => {
-      await addTodo(title)
+    setIsPending(true)
+    try {
+      await onAdd(title)
       setTitle('')
-    })
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (
