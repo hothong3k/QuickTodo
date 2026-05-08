@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { updatePriority } from '@/actions/todo-actions'
 import { useTransition } from 'react'
 import { Check } from 'lucide-react'
 
@@ -60,9 +59,10 @@ export function getPriorityBorderClass(priority: number): string {
 interface PriorityPickerProps {
   todoId: string
   currentPriority: number
+  onPriorityChange: (priority: number) => void
 }
 
-export default function PriorityPicker({ todoId, currentPriority }: PriorityPickerProps) {
+export default function PriorityPicker({ todoId: _todoId, currentPriority, onPriorityChange }: PriorityPickerProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
   const popoverRef = useRef<HTMLDivElement>(null)
@@ -85,8 +85,8 @@ export default function PriorityPicker({ todoId, currentPriority }: PriorityPick
       setOpen(false)
       return
     }
-    startTransition(async () => {
-      await updatePriority(todoId, level)
+    startTransition(() => {
+      onPriorityChange(level)
       setOpen(false)
     })
   }
