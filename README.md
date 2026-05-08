@@ -1,4 +1,4 @@
-# QuickTodo - Modern Todo Application
+# QuickTodo - Modern Todo Application (V1.5)
 
 QuickTodo is a modern task management application (Todo List), focusing on smooth user experience, refined interface, and high performance. The application is designed to be minimalist, requiring no login or app downloads, suitable for personal use or feature demos.
 
@@ -11,6 +11,8 @@ The project uses the following technologies:
 - **Database ODM**: [Mongoose](https://mongoosejs.com/) - Easily connect and manage MongoDB data.
 - **Database**: [MongoDB](https://www.mongodb.com/) - Flexible NoSQL database.
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) - Utility-first CSS framework for rapid UI design.
+- **Authentication**: [NextAuth](https://next-auth.js.org/) - Authentication for Next.js.
+- **UI State Management**: [Zustand](https://zustand.dev/) - Simple, fast, and scalable state management.
 
 ## User Manual (Workflow)
 
@@ -30,6 +32,50 @@ The system architecture is built according to the modern Next.js model:
 - **Server Components**: Defaults to using Server Components to fetch data from MongoDB via Mongoose.
 - **Server Actions**: Processes CRUD (Create, Read, Update, Delete) operations directly from the client without going through traditional API endpoints, making the code more concise and secure.
 - **Data Modeling**: Data is stored in MongoDB with a flexible structure, strictly managed by the Mongoose Schema.
+
+## Folder Structure
+
+```
+quicktodo/
+├── docs/                 # Tài liệu hướng dẫn cho AI Agent
+├── public/               # Static assets (images, icons, fonts)
+├── src/
+│   ├── actions/          # Server Actions xử lý logic phía server (CRUD Todo)
+│   │   └── todo-actions.ts
+│   ├── app/              # App Router: Pages, Layouts và API routes
+│   │   ├── api/
+│   │   │   └── auth/     # Route xử lý xác thực (NextAuth, Register)
+│   │   ├── auth/         # Giao diện đăng nhập và đăng ký
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components/       # Các components UI dùng chung
+│   │   ├── auth-button.tsx
+│   │   ├── priority-picker.tsx
+│   │   ├── session-provider.tsx
+│   │   ├── theme-provider.tsx
+│   │   ├── theme-toggle.tsx
+│   │   ├── todo-client-wrapper.tsx
+│   │   ├── todo-form.tsx
+│   │   ├── todo-item.tsx
+│   │   └── todo-list.tsx
+│   ├── lib/              # Thư viện và cấu hình (Database, Auth)
+│   │   ├── auth.ts
+│   │   ├── mongodb-client.ts
+│   │   └── mongoose.ts
+│   ├── models/           # Định nghĩa Mongoose schemas
+│   │   └── Todo.ts
+│   ├── store/            # Quản lý state Local (Zustand) khi chưa đăng nhập
+│   │   └── todo-store.ts
+│   └── types/            # Định nghĩa các TypeScript interfaces/types
+│       └── index.ts
+├── .env                  # Lưu trữ biến môi trường (Secrets, URI)
+├── next.config.ts        # Cấu hình Next.js
+├── package.json          # Danh sách dependencies và scripts
+├── tailwind.config.ts    # Cấu hình giao diện Tailwind CSS
+└── tsconfig.json         # Cấu hình trình biên dịch TypeScript
+```
 
 ## System Installation and Deployment Guide
 
@@ -113,9 +159,14 @@ pnpm start
 
 ## Notes and Limitations
 
-- **Anonymity**: The application has no login system. All users accessing the application will see and manage a shared Todo list (Suitable for demos or personal local use).
 - **Network connection**: An active Internet connection is required if using MongoDB Atlas.
 - **Browser**: Best supported on modern browsers (Chrome, Edge, Firefox, Safari).
+- **LocalStorage (Unauthenticated)**: When not logged in, data is stored only in the browser's `localStorage`. This means:
+    - Data is not synced across different devices or browsers.
+    - Data only stored in the device that was used to create it. So logged in means two separate list of data. (Will figure solution later)
+    - Clearing browser cache or data will result in the loss of all tasks.
+    - It is recommended to log in for persistent storage and multi-device synchronization.
+- **Future Updates**: New features such as categories, due dates, and detailed user profiles are planned for subsequent versions.
 
 ## Documentation Deliverables
 
