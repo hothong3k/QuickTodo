@@ -1,38 +1,47 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { toggleTodo, updateTodo, deleteTodo } from '@/actions/todo-actions'
+import { useState } from 'react'
 import PriorityPicker, { getPriorityBorderClass } from '@/components/priority-picker'
 import { Pencil, Trash2, Check, X, Loader2 } from 'lucide-react'
 import type { Todo } from '@/types'
 
 interface TodoItemProps {
   todo: Todo
+  onToggle: (id: string) => Promise<void>
+  onUpdate: (id: string, title: string) => Promise<void>
+  onDelete: (id: string) => Promise<void>
+  onPriorityChange: (id: string, priority: number) => Promise<void>
 }
 
-export default function TodoItem({ todo }: TodoItemProps) {
+export default function TodoItem({
+  todo,
+  onToggle,
+  onUpdate,
+  onDelete,
+  onPriorityChange,
+}: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editTitle, setEditTitle] = useState(todo.title)
-  const [isPending, startTransition] = useTransition()
+  const [isPending, setIsPending] = useState(false)
 
   const borderClass = getPriorityBorderClass(todo.priority)
 
-  const handleToggle = () => {
-    startTransition(async () => {
-      await toggleTodo(todo.id)
-    })
+  const withPending = async (fn: () => Promise<void>) => {
+    setIsPending(true)
+    try {
+      await fn()
+    } finally {
+      setIsPending(false)
+    }
   }
 
-  const handleDelete = () => {
-    startTransition(async () => {
-      await deleteTodo(todo.id)
-    })
-  }
+  const handleToggle = () => withPending(() => onToggle(todo.id))
+  const handleDelete = () => withPending(() => onDelete(todo.id))
 
   const handleSave = () => {
     if (!editTitle.trim()) return
-    startTransition(async () => {
-      await updateTodo(todo.id, editTitle)
+    withPending(async () => {
+      await onUpdate(todo.id, editTitle)
       setIsEditing(false)
     })
   }
@@ -92,7 +101,11 @@ export default function TodoItem({ todo }: TodoItemProps) {
       {/* Action buttons */}
       <div className="flex shrink-0 items-center gap-1">
         {/* Priority dot */}
-        <PriorityPicker todoId={todo.id} currentPriority={todo.priority} />
+        <PriorityPicker
+          todoId={todo.id}
+          currentPriority={todo.priority}
+          onPriorityChange={(priority) => onPriorityChange(todo.id, priority)}
+        />
 
         {isEditing ? (
           <>
