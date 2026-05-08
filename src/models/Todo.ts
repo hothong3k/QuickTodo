@@ -5,6 +5,7 @@ export interface ITodo extends Document {
   isDone: boolean
   priority: number
   createdAt: Date
+  userId?: string // optional: chỉ có nếu user đăng nhập
 }
 
 const TodoSchema = new Schema<ITodo>({
@@ -12,6 +13,7 @@ const TodoSchema = new Schema<ITodo>({
   isDone: { type: Boolean, default: false },
   priority: { type: Number, default: 4 },
   createdAt: { type: Date, default: Date.now },
+  userId: { type: String, index: true }, // index để query nhanh theo user
 })
 
 const TodoModel: Model<ITodo> =
