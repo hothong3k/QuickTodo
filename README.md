@@ -37,20 +37,19 @@ The system architecture is built according to the modern Next.js model:
 
 ```
 quicktodo/
-├── docs/                 # Tài liệu hướng dẫn cho AI Agent
 ├── public/               # Static assets (images, icons, fonts)
 ├── src/
-│   ├── actions/          # Server Actions xử lý logic phía server (CRUD Todo)
+│   ├── actions/          # Server Actions for server-side logic (CRUD Todo)
 │   │   └── todo-actions.ts
-│   ├── app/              # App Router: Pages, Layouts và API routes
+│   ├── app/              # App Router: Pages, Layouts, and API routes
 │   │   ├── api/
-│   │   │   └── auth/     # Route xử lý xác thực (NextAuth, Register)
-│   │   ├── auth/         # Giao diện đăng nhập và đăng ký
+│   │   │   └── auth/     # Authentication routes (NextAuth, Register)
+│   │   ├── auth/         # Login and registration UI
 │   │   ├── favicon.ico
 │   │   ├── globals.css
 │   │   ├── layout.tsx
 │   │   └── page.tsx
-│   ├── components/       # Các components UI dùng chung
+│   ├── components/       # Shared UI components
 │   │   ├── auth-button.tsx
 │   │   ├── priority-picker.tsx
 │   │   ├── session-provider.tsx
@@ -60,21 +59,21 @@ quicktodo/
 │   │   ├── todo-form.tsx
 │   │   ├── todo-item.tsx
 │   │   └── todo-list.tsx
-│   ├── lib/              # Thư viện và cấu hình (Database, Auth)
+│   ├── lib/              # Libraries and configurations (Database, Auth)
 │   │   ├── auth.ts
 │   │   ├── mongodb-client.ts
 │   │   └── mongoose.ts
-│   ├── models/           # Định nghĩa Mongoose schemas
+│   ├── models/           # Mongoose schema definitions
 │   │   └── Todo.ts
-│   ├── store/            # Quản lý state Local (Zustand) khi chưa đăng nhập
+│   ├── store/            # Local state management (Zustand) when not logged in
 │   │   └── todo-store.ts
-│   └── types/            # Định nghĩa các TypeScript interfaces/types
+│   └── types/            # TypeScript interfaces/types definitions
 │       └── index.ts
-├── .env                  # Lưu trữ biến môi trường (Secrets, URI)
-├── next.config.ts        # Cấu hình Next.js
-├── package.json          # Danh sách dependencies và scripts
-├── tailwind.config.ts    # Cấu hình giao diện Tailwind CSS
-└── tsconfig.json         # Cấu hình trình biên dịch TypeScript
+├── .env                  # Environment variables storage (Secrets, URI)
+├── next.config.ts        # Next.js configuration
+├── package.json          # Project dependencies and scripts
+├── tailwind.config.ts    # Tailwind CSS configuration
+└── tsconfig.json         # TypeScript compiler configuration
 ```
 
 ## System Installation and Deployment Guide
