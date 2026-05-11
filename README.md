@@ -1,4 +1,4 @@
-# QuickTodo - Modern Todo Application (V1.5)
+# QuickTodo - Modern Todo Application
 
 QuickTodo is a modern task management application (Todo List), focusing on smooth user experience, refined interface, and high performance. The application is designed to be minimalist, requiring no login or app downloads, suitable for personal use or feature demos.
 
@@ -38,6 +38,8 @@ The system architecture is built according to the modern Next.js model:
 ```
 quicktodo/
 ├── public/               # Static assets (images, icons, fonts)
+│   ├── tasks.md
+│   └── ui-changes-plan.md
 ├── src/
 │   ├── actions/          # Server Actions for server-side logic (CRUD Todo)
 │   │   └── todo-actions.ts
@@ -45,12 +47,15 @@ quicktodo/
 │   │   ├── api/
 │   │   │   └── auth/     # Authentication routes (NextAuth, Register)
 │   │   ├── auth/         # Login and registration UI
+│   │   ├── contact/      # Contact page
+│   │   ├── todo/         # Main Todo list page
 │   │   ├── favicon.ico
 │   │   ├── globals.css
 │   │   ├── layout.tsx
-│   │   └── page.tsx
+│   │   └── page.tsx      # Landing page
 │   ├── components/       # Shared UI components
 │   │   ├── auth-button.tsx
+│   │   ├── header.tsx
 │   │   ├── priority-picker.tsx
 │   │   ├── session-provider.tsx
 │   │   ├── theme-provider.tsx
@@ -74,6 +79,7 @@ quicktodo/
 ├── package.json          # Project dependencies and scripts
 ├── tailwind.config.ts    # Tailwind CSS configuration
 └── tsconfig.json         # TypeScript compiler configuration
+
 ```
 
 ## System Installation and Deployment Guide
