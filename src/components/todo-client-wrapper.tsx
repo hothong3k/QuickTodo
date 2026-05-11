@@ -1,8 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
+import { Menu, Check } from 'lucide-react'
 import TodoForm from '@/components/todo-form'
 import TodoList from '@/components/todo-list'
+import { PRIORITY_CONFIG } from '@/components/priority-picker'
 import { useTodoStore } from '@/store/todo-store'
 import {
   addTodo,
@@ -40,19 +42,44 @@ export default function TodoClientWrapper({
 
   // Hydration-safe: chờ client mount mới đọc store
   const [hydrated, setHydrated] = useState(false)
+  const [priorityFilters, setPriorityFilters] = useState<number[]>([])
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const filterRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     setHydrated(true)
   }, [])
 
+  // Đóng filter khi click ngoài
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setIsFilterOpen(false)
+      }
+    }
+    if (isFilterOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isFilterOpen])
+
+  const toggleFilter = (level: number) => {
+    setPriorityFilters((prev) =>
+      prev.includes(level)
+        ? prev.filter((l) => l !== level)
+        : [...prev, level]
+    )
+  }
+
   // --- Handlers cho người ĐÃ đăng nhập (gọi Server Actions) ---
-  const handleAddAuth = async (title: string) => {
+  const handleAddAuth = async (title: string, priority: number) => {
     // Optimistic update: thêm vào local state ngay lập tức
     const tempId = `temp_${Date.now()}`
     const newTodo: Todo = {
       id: tempId, // id tạm, sẽ bị thay bằng re-fetch
       title: title.trim(),
       isDone: false,
-      priority: 4,
+      priority: priority,
       createdAt: new Date(),
     }
     setDbTodos((prev) =>
@@ -61,7 +88,7 @@ export default function TodoClientWrapper({
       )
     )
 
-    await addTodo(title) // revalidatePath bên trong
+    await addTodo(title, priority) // revalidatePath bên trong
   }
 
   const handleToggleAuth = async (id: string) => {
@@ -99,8 +126,8 @@ export default function TodoClientWrapper({
   }
 
   // --- Handlers cho người CHƯA đăng nhập (gọi Zustand store) ---
-  const handleAddLocal = async (title: string) => {
-    storeAdd(title)
+  const handleAddLocal = async (title: string, priority: number) => {
+    storeAdd(title, priority)
   }
 
   const handleToggleLocal = async (id: string) => {
@@ -134,11 +161,75 @@ export default function TodoClientWrapper({
   }
 
   if (isLoggedIn) {
+    const filteredTodos = dbTodos.filter(
+      (t) => priorityFilters.length === 0 || priorityFilters.includes(t.priority)
+    )
+
     return (
       <div className="flex flex-col gap-6">
-        <TodoForm onAdd={handleAddAuth} />
+        <div className="flex items-center gap-3">
+          {/* Nút Menu - Bộ lọc mức độ */}
+          <div className="relative" ref={filterRef}>
+            <button
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={`flex h-14 w-14 items-center justify-center rounded-xl border transition-all duration-200 ${
+                priorityFilters.length > 0
+                  ? 'border-blue-500 bg-blue-500/10 text-blue-600'
+                  : 'border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
+              }`}
+              title="Bộ lọc mức độ"
+            >
+              <Menu size={24} />
+              {priorityFilters.length > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
+                  {priorityFilters.length}
+                </span>
+              )}
+            </button>
+
+            {/* Dropdown bộ lọc */}
+            {isFilterOpen && (
+              <div className="absolute left-0 top-full z-50 mt-2 w-56 animate-in fade-in slide-in-from-top-1 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-2 shadow-xl">
+                <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] opacity-70">
+                  Lọc theo mức độ
+                </p>
+                <div className="space-y-0.5">
+                  {PRIORITY_CONFIG.map((p) => {
+                    const isSelected = priorityFilters.includes(p.level)
+                    return (
+                      <button
+                        key={p.level}
+                        onClick={() => toggleFilter(p.level)}
+                        className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors duration-150 ${
+                          isSelected ? 'bg-blue-500/10' : 'hover:bg-[var(--muted)]'
+                        }`}
+                      >
+                        <span className={`block h-3 w-3 shrink-0 rounded-full ${p.color}`} />
+                        <span className="flex-1 text-sm font-medium text-[var(--foreground)]">
+                          {p.label}
+                        </span>
+                        {isSelected && <Check size={16} className="shrink-0 text-blue-500" />}
+                      </button>
+                    )
+                  })}
+                </div>
+                {priorityFilters.length > 0 && (
+                  <button
+                    onClick={() => setPriorityFilters([])}
+                    className="mt-2 w-full border-t border-[var(--card-border)] pt-2 text-center text-xs font-semibold text-blue-500 hover:text-blue-600"
+                  >
+                    Xoá bộ lọc
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          <TodoForm onAdd={handleAddAuth} />
+        </div>
+
         <TodoList
-          todos={dbTodos}
+          todos={filteredTodos}
           onToggle={handleToggleAuth}
           onUpdate={handleUpdateAuth}
           onDelete={handleDeleteAuth}
@@ -148,22 +239,90 @@ export default function TodoClientWrapper({
     )
   }
 
+  const filteredStoreTodos = storeTodos.filter(
+    (t) => priorityFilters.length === 0 || priorityFilters.includes(t.priority)
+  )
+
   return (
     <div className="flex flex-col gap-6">
       {/* Banner nhắc nhở đăng nhập */}
       <div className="flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-sm text-amber-700 dark:text-amber-400">
         <span className="text-lg">💾</span>
         <span>
-          Dữ liệu đang được lưu tại trình duyệt này.{' '}
-          <a href="/auth/signin" className="font-semibold underline underline-offset-2 hover:text-amber-600 dark:hover:text-amber-300 transition-colors">
-            Đăng nhập
+          Dữ liệu đang được lưu cục bộ tại trình duyệt này. Hãy{' '}
+          <a
+            href="/auth/signin"
+            className="font-semibold underline underline-offset-2 transition-colors hover:text-amber-600 dark:hover:text-amber-300"
+          >
+            đăng nhập
           </a>{' '}
-          để đồng bộ và sử dụng trên nhiều thiết bị.
+          để đồng bộ dữ liệu và sử dụng trên nhiều thiết bị.
         </span>
       </div>
-      <TodoForm onAdd={handleAddLocal} />
+
+      <div className="flex items-center gap-3">
+        {/* Nút Menu - Bộ lọc mức độ */}
+        <div className="relative" ref={filterRef}>
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className={`flex h-14 w-14 items-center justify-center rounded-xl border transition-all duration-200 ${
+              priorityFilters.length > 0
+                ? 'border-blue-500 bg-blue-500/10 text-blue-600'
+                : 'border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
+            }`}
+            title="Bộ lọc mức độ"
+          >
+            <Menu size={24} />
+            {priorityFilters.length > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
+                {priorityFilters.length}
+              </span>
+            )}
+          </button>
+
+          {/* Dropdown bộ lọc */}
+          {isFilterOpen && (
+            <div className="absolute left-0 top-full z-50 mt-2 w-56 animate-in fade-in slide-in-from-top-1 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-2 shadow-xl">
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] opacity-70">
+                Lọc theo mức độ
+              </p>
+              <div className="space-y-0.5">
+                {PRIORITY_CONFIG.map((p) => {
+                  const isSelected = priorityFilters.includes(p.level)
+                  return (
+                    <button
+                      key={p.level}
+                      onClick={() => toggleFilter(p.level)}
+                      className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors duration-150 ${
+                        isSelected ? 'bg-blue-500/10' : 'hover:bg-[var(--muted)]'
+                      }`}
+                    >
+                      <span className={`block h-3 w-3 shrink-0 rounded-full ${p.color}`} />
+                      <span className="flex-1 text-sm font-medium text-[var(--foreground)]">
+                        {p.label}
+                      </span>
+                      {isSelected && <Check size={16} className="shrink-0 text-blue-500" />}
+                    </button>
+                  )
+                })}
+              </div>
+              {priorityFilters.length > 0 && (
+                <button
+                  onClick={() => setPriorityFilters([])}
+                  className="mt-2 w-full border-t border-[var(--card-border)] pt-2 text-center text-xs font-semibold text-blue-500 hover:text-blue-600"
+                >
+                  Xoá bộ lọc
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        <TodoForm onAdd={handleAddLocal} />
+      </div>
+
       <TodoList
-        todos={storeTodos}
+        todos={filteredStoreTodos}
         onToggle={handleToggleLocal}
         onUpdate={handleUpdateLocal}
         onDelete={handleDeleteLocal}

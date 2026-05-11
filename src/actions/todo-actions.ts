@@ -12,12 +12,12 @@ async function getUserId(): Promise<string | null> {
 }
 
 // Thêm todo mới
-export async function addTodo(title: string) {
+export async function addTodo(title: string, priority: number = 4) {
   if (!title || !title.trim()) return
   const userId = await getUserId()
   if (!userId) throw new Error('Unauthorized')
   await connectDB()
-  await TodoModel.create({ title: title.trim(), userId })
+  await TodoModel.create({ title: title.trim(), userId, priority })
   revalidatePath('/')
 }
 
