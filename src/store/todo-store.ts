@@ -9,7 +9,7 @@ function generateId(): string {
 
 interface TodoStore {
   todos: Todo[]
-  addTodo: (title: string) => void
+  addTodo: (title: string, priority: number) => void
   toggleTodo: (id: string) => void
   updateTodo: (id: string, title: string) => void
   deleteTodo: (id: string) => void
@@ -21,12 +21,12 @@ export const useTodoStore = create<TodoStore>()(
     (set) => ({
       todos: [],
 
-      addTodo: (title) => {
+      addTodo: (title, priority) => {
         const newTodo: Todo = {
           id: generateId(),
           title: title.trim(),
           isDone: false,
-          priority: 4,
+          priority: priority,
           createdAt: new Date(),
         }
         set((state) => ({
