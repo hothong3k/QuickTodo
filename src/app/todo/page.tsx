@@ -37,7 +37,7 @@ export default async function TodoPage() {
 
       <footer className="mt-12 border-t border-zinc-200 py-6 text-center dark:border-zinc-800">
         <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
-          2026 – HO THONG 3K - V1.5
+          2026 – HO THONG 3K
         </p>
       </footer>
     </div>
