@@ -5,7 +5,7 @@ import { useTransition } from 'react'
 import { Check } from 'lucide-react'
 
 // Cấu hình 4 cấp ưu tiên theo giao diện
-const PRIORITY_CONFIG = [
+export const PRIORITY_CONFIG = [
   {
     level: 1,
     label: 'Cấp 1',
