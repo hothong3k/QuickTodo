@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Todo } from '@/types'
+import { TODO_TITLE_MAX_LENGTH, type Todo } from '@/types'
 
 // Helper tạo id ngẫu nhiên
 function generateId(): string {
@@ -22,9 +22,12 @@ export const useTodoStore = create<TodoStore>()(
       todos: [],
 
       addTodo: (title, priority) => {
+        const cleanTitle = title.trim().slice(0, TODO_TITLE_MAX_LENGTH)
+        if (!cleanTitle) return
+
         const newTodo: Todo = {
           id: generateId(),
-          title: title.trim(),
+          title: cleanTitle,
           isDone: false,
           priority: priority,
           createdAt: new Date(),
@@ -46,9 +49,12 @@ export const useTodoStore = create<TodoStore>()(
       },
 
       updateTodo: (id, title) => {
+        const cleanTitle = title.trim().slice(0, TODO_TITLE_MAX_LENGTH)
+        if (!cleanTitle) return
+
         set((state) => ({
           todos: state.todos.map((t) =>
-            t.id === id ? { ...t, title: title.trim() } : t
+            t.id === id ? { ...t, title: cleanTitle } : t
           ),
         }))
       },
