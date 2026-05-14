@@ -10,10 +10,15 @@ import {
   addTodo,
   toggleTodo,
   updateTodo,
+  updateTodoDescription,
   deleteTodo,
   updatePriority,
 } from '@/actions/todo-actions'
-import type { Todo } from '@/types'
+import {
+  TODO_DESCRIPTION_MAX_LENGTH,
+  TODO_TITLE_MAX_LENGTH,
+  type Todo,
+} from '@/types'
 
 interface TodoClientWrapperProps {
   isLoggedIn: boolean
@@ -27,11 +32,6 @@ export default function TodoClientWrapper({
   // Todos hiển thị: nếu đã login thì dùng initialTodos, nếu không thì dùng store
   const [dbTodos, setDbTodos] = useState<Todo[]>(initialTodos)
 
-  // Đồng bộ lại khi có dữ liệu mới từ Server (do revalidatePath)
-  useEffect(() => {
-    setDbTodos(initialTodos)
-  }, [initialTodos])
-
   // Zustand store dùng cho người chưa đăng nhập
   const storeTodos = useTodoStore((s) => s.todos)
   const storeAdd = useTodoStore((s) => s.addTodo)
@@ -44,10 +44,12 @@ export default function TodoClientWrapper({
   const [hydrated, setHydrated] = useState(false)
   const [priorityFilters, setPriorityFilters] = useState<number[]>([])
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [authNotice, setAuthNotice] = useState('')
   const filterRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setHydrated(true)
+    const timer = window.setTimeout(() => setHydrated(true), 0)
+    return () => window.clearTimeout(timer)
   }, [])
 
   // Đóng filter khi click ngoài
@@ -71,13 +73,21 @@ export default function TodoClientWrapper({
     )
   }
 
+  const showDescriptionLoginNotice = () => {
+    setAuthNotice('Hãy đăng nhập để dùng tính năng này')
+  }
+
   // --- Handlers cho người ĐÃ đăng nhập (gọi Server Actions) ---
   const handleAddAuth = async (title: string, priority: number) => {
+    const cleanTitle = title.trim().slice(0, TODO_TITLE_MAX_LENGTH)
+    if (!cleanTitle) return
+
     // Optimistic update: thêm vào local state ngay lập tức
     const tempId = `temp_${Date.now()}`
     const newTodo: Todo = {
       id: tempId, // id tạm, sẽ bị thay bằng re-fetch
-      title: title.trim(),
+      title: cleanTitle,
+      description: '',
       isDone: false,
       priority: priority,
       createdAt: new Date(),
@@ -88,7 +98,7 @@ export default function TodoClientWrapper({
       )
     )
 
-    await addTodo(title, priority) // revalidatePath bên trong
+    await addTodo(cleanTitle, priority) // revalidatePath bên trong
   }
 
   const handleToggleAuth = async (id: string) => {
@@ -101,10 +111,23 @@ export default function TodoClientWrapper({
 
   const handleUpdateAuth = async (id: string, title: string) => {
     if (id.startsWith('temp_')) return
+    const cleanTitle = title.trim().slice(0, TODO_TITLE_MAX_LENGTH)
+    if (!cleanTitle) return
+
     setDbTodos((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, title } : t))
+      prev.map((t) => (t.id === id ? { ...t, title: cleanTitle } : t))
     )
-    await updateTodo(id, title)
+    await updateTodo(id, cleanTitle)
+  }
+
+  const handleDescriptionAuth = async (id: string, description: string) => {
+    if (id.startsWith('temp_')) return
+    const cleanDescription = description.trim().slice(0, TODO_DESCRIPTION_MAX_LENGTH)
+
+    setDbTodos((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, description: cleanDescription } : t))
+    )
+    await updateTodoDescription(id, cleanDescription)
   }
 
   const handleDeleteAuth = async (id: string) => {
@@ -136,6 +159,10 @@ export default function TodoClientWrapper({
 
   const handleUpdateLocal = async (id: string, title: string) => {
     storeUpdate(id, title)
+  }
+
+  const handleDescriptionLocal = async () => {
+    showDescriptionLoginNotice()
   }
 
   const handleDeleteLocal = async (id: string) => {
@@ -172,11 +199,10 @@ export default function TodoClientWrapper({
           <div className="relative" ref={filterRef}>
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className={`flex h-14 w-14 items-center justify-center rounded-xl border transition-all duration-200 ${
-                priorityFilters.length > 0
-                  ? 'border-blue-500 bg-blue-500/10 text-blue-600'
-                  : 'border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
-              }`}
+              className={`flex h-14 w-14 items-center justify-center rounded-xl border transition-all duration-200 ${priorityFilters.length > 0
+                ? 'border-blue-500 bg-blue-500/10 text-blue-600'
+                : 'border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
+                }`}
               title="Bộ lọc mức độ"
             >
               <Menu size={24} />
@@ -200,9 +226,8 @@ export default function TodoClientWrapper({
                       <button
                         key={p.level}
                         onClick={() => toggleFilter(p.level)}
-                        className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors duration-150 ${
-                          isSelected ? 'bg-blue-500/10' : 'hover:bg-[var(--muted)]'
-                        }`}
+                        className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors duration-150 ${isSelected ? 'bg-blue-500/10' : 'hover:bg-[var(--muted)]'
+                          }`}
                       >
                         <span className={`block h-3 w-3 shrink-0 rounded-full ${p.color}`} />
                         <span className="flex-1 text-sm font-medium text-[var(--foreground)]">
@@ -230,10 +255,13 @@ export default function TodoClientWrapper({
 
         <TodoList
           todos={filteredTodos}
+          isLoggedIn={isLoggedIn}
           onToggle={handleToggleAuth}
           onUpdate={handleUpdateAuth}
+          onUpdateDescription={handleDescriptionAuth}
           onDelete={handleDeleteAuth}
           onPriorityChange={handlePriorityAuth}
+          onRequireLoginForDescription={showDescriptionLoginNotice}
         />
       </div>
     )
@@ -249,7 +277,7 @@ export default function TodoClientWrapper({
       <div className="flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-sm text-amber-700 dark:text-amber-400">
         <span className="text-lg">💾</span>
         <span>
-          Dữ liệu đang được lưu cục bộ tại trình duyệt này. Hãy{' '}
+          Dữ liệu đang CHỈ được lưu cục bộ tại trình duyệt này, và sẽ KHÔNG ĐỒNG BỘ sang thiết bị khác. Hãy{' '}
           <a
             href="/auth/signin"
             className="font-semibold underline underline-offset-2 transition-colors hover:text-amber-600 dark:hover:text-amber-300"
@@ -260,16 +288,36 @@ export default function TodoClientWrapper({
         </span>
       </div>
 
+      {authNotice && (
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-blue-500/30 bg-blue-500/5 px-4 py-3 text-sm text-blue-700 dark:text-blue-300">
+          <span>
+            {authNotice}.{' '}
+            <a
+              href="/auth/signin"
+              className="font-semibold underline underline-offset-2 transition-colors hover:text-blue-600 dark:hover:text-blue-200"
+            >
+              Đăng nhập
+            </a>
+          </span>
+          <button
+            type="button"
+            onClick={() => setAuthNotice('')}
+            className="shrink-0 rounded-lg px-2 py-1 text-xs font-semibold hover:bg-blue-500/10"
+          >
+            Đóng
+          </button>
+        </div>
+      )}
+
       <div className="flex items-center gap-3">
         {/* Nút Menu - Bộ lọc mức độ */}
         <div className="relative" ref={filterRef}>
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className={`flex h-14 w-14 items-center justify-center rounded-xl border transition-all duration-200 ${
-              priorityFilters.length > 0
-                ? 'border-blue-500 bg-blue-500/10 text-blue-600'
-                : 'border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
-            }`}
+            className={`flex h-14 w-14 items-center justify-center rounded-xl border transition-all duration-200 ${priorityFilters.length > 0
+              ? 'border-blue-500 bg-blue-500/10 text-blue-600'
+              : 'border-[var(--card-border)] bg-[var(--card-bg)] text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
+              }`}
             title="Bộ lọc mức độ"
           >
             <Menu size={24} />
@@ -293,9 +341,8 @@ export default function TodoClientWrapper({
                     <button
                       key={p.level}
                       onClick={() => toggleFilter(p.level)}
-                      className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors duration-150 ${
-                        isSelected ? 'bg-blue-500/10' : 'hover:bg-[var(--muted)]'
-                      }`}
+                      className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors duration-150 ${isSelected ? 'bg-blue-500/10' : 'hover:bg-[var(--muted)]'
+                        }`}
                     >
                       <span className={`block h-3 w-3 shrink-0 rounded-full ${p.color}`} />
                       <span className="flex-1 text-sm font-medium text-[var(--foreground)]">
@@ -323,10 +370,13 @@ export default function TodoClientWrapper({
 
       <TodoList
         todos={filteredStoreTodos}
+        isLoggedIn={isLoggedIn}
         onToggle={handleToggleLocal}
         onUpdate={handleUpdateLocal}
+        onUpdateDescription={handleDescriptionLocal}
         onDelete={handleDeleteLocal}
         onPriorityChange={handlePriorityLocal}
+        onRequireLoginForDescription={showDescriptionLoginNotice}
       />
     </div>
   )
