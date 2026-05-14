@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, User } from "lucide-react";
+import { Mail } from "lucide-react";
 
 export default function ContactPage() {
   return (
@@ -9,7 +9,7 @@ export default function ContactPage() {
         <div className="mb-12 text-center">
           <div className="w-32 h-32 relative mx-auto mb-6">
             <Image
-              src="/latest.png"
+              src="/avatar.png"
               alt="Hồ Mai Duy Thống"
               fill
               sizes="128px"
