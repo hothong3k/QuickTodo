@@ -20,6 +20,7 @@ export default async function TodoPage() {
     initialTodos = rawTodos.map((t) => ({
       id: String(t._id),
       title: t.title,
+      description: t.description ?? '',
       isDone: t.isDone ?? false,
       priority: t.priority ?? 4,
       createdAt: t.createdAt ?? new Date(),
