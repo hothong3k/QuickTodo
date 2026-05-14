@@ -35,7 +35,7 @@ export default function AuthButton() {
     return (
       <Link
         href="/auth/signin"
-        className="flex items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-2 text-sm font-semibold text-[var(--foreground)] shadow-sm transition-all duration-200 hover:border-blue-500 hover:text-blue-500 hover:shadow-md"
+        className="flex items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-2 text-sm font-semibold text-[var(--foreground)] shadow-sm transition-all duration-200 hover:border-blue-500 hover:text-blue-500 hover:shadow-md sm:px-4"
       >
         <LogIn size={16} />
         Đăng nhập
@@ -53,7 +53,7 @@ export default function AuthButton() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="flex items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-1.5 text-sm font-semibold text-[var(--foreground)] shadow-sm transition-all duration-200 hover:border-blue-500/50 hover:shadow-md"
+        className="flex items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-2.5 py-1.5 text-sm font-semibold text-[var(--foreground)] shadow-sm transition-all duration-200 hover:border-blue-500/50 hover:shadow-md sm:px-3"
         aria-label="Menu tài khoản"
       >
         {/* Avatar */}
