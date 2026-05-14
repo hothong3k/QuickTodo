@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Plus, Loader2, Check } from 'lucide-react'
 import { PRIORITY_CONFIG, getPriorityDotClass } from '@/components/priority-picker'
+import { TODO_TITLE_MAX_LENGTH } from '@/types'
 
 interface TodoFormProps {
   onAdd: (title: string, priority: number) => Promise<void>
@@ -104,6 +105,7 @@ export default function TodoForm({ onAdd }: TodoFormProps) {
         <input
           type="text"
           value={title}
+          maxLength={TODO_TITLE_MAX_LENGTH}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Việc cần làm của bạn là ... "
           disabled={isPending}
