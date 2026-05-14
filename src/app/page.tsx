@@ -12,9 +12,11 @@ export default function Home() {
             <span className="text-blue-500">nhanh gọn & tối ưu</span>
           </h1>
           <p className="text-lg text-muted-foreground mb-8">
-            Không cần tải app linh tinh, không yêu cầu đăng nhập nếu bạn không muốn. Chỉ cần mở web lên và tập trung tạo nhanh các công việc cần làm của bạn!
+            Không cần tải app linh tinh, không yêu cầu đăng nhập nếu bạn không muốn.
             <br />
-            (À nhưng mà nếu muốn tạo nhanh ở mọi thiết bị thì phải đăng nhập đấy nhé!)
+            Chỉ cần mở web lên và tập trung tạo nhanh các công việc cần làm của bạn!
+            <br />
+            (À nhưng mà nếu muốn có nhiều trải nghiệm hơn thì phải đăng nhập đấy nhé!)
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
@@ -45,14 +47,14 @@ export default function Home() {
             <CheckCircle2 className="w-12 h-12 mb-4 text-green-500" />
             <h3 className="text-xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">Lưu trữ cục bộ</h3>
             <p className="text-zinc-600 dark:text-zinc-400 text-sm">
-              Sử dụng ngay không cần tài khoản, dữ liệu được lưu an toàn trong trình duyệt của bạn.
+              Sử dụng ngay không cần tài khoản, dữ liệu được lưu cục bộ an toàn trong trình duyệt của bạn.
             </p>
           </div>
           <div className="flex flex-col items-center text-center p-6 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
             <CloudSync className="w-12 h-12 mb-4 text-purple-500" />
             <h3 className="text-xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">Đồng bộ đám mây</h3>
             <p className="text-zinc-600 dark:text-zinc-400 text-sm">
-              Đăng nhập để lưu trữ dữ liệu lên đám mây và đồng bộ trên nhiều thiết bị.
+              Đăng nhập để đồng bộ trên nhiều thiết bị, và sử dụng những tính năng thú vị.
             </p>
           </div>
         </div>
@@ -65,7 +67,7 @@ export default function Home() {
               <span className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">1</span>
               <div>
                 <p className="font-semibold text-zinc-900 dark:text-zinc-100">Truy cập Trang Todo</p>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">Nhấp vào "Dùng ngay" hoặc nút Trang Chủ trên thanh điều hướng.</p>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">Nhấp vào &quot;Dùng ngay&quot; ở phía trên của trang này.</p>
               </div>
             </li>
             <li className="flex gap-3">
@@ -79,7 +81,7 @@ export default function Home() {
               <span className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">3</span>
               <div>
                 <p className="font-semibold text-zinc-900 dark:text-zinc-100">Quản lý hiệu quả</p>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">Đánh dấu hoàn thành, sửa hoặc xóa công việc. Tạo tài khoản để lưu trữ online.</p>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">Đánh dấu hoàn thành, thêm mô tả chi tiết hoặc xóa công việc, và nhiều tính năng khác. Nhưng mà nhớ là phải đăng nhập mới dùng được nhé!.</p>
               </div>
             </li>
           </ul>
@@ -89,7 +91,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-zinc-200 py-6 text-center dark:border-zinc-800">
         <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
-          2026 – HO THONG 3K - V1.6
+          2026 – HO THONG 3K
         </p>
       </footer>
     </div>
