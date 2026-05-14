@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose'
 
 export interface ITodo extends Document {
   title: string
+  description?: string
   isDone: boolean
   priority: number
   createdAt: Date
@@ -10,6 +11,7 @@ export interface ITodo extends Document {
 
 const TodoSchema = new Schema<ITodo>({
   title: { type: String, required: true },
+  description: { type: String, default: '' },
   isDone: { type: Boolean, default: false },
   priority: { type: Number, default: 4 },
   createdAt: { type: Date, default: Date.now },
