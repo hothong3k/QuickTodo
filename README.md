@@ -1,94 +1,44 @@
 # QuickTodo - Modern Todo Application
 
-QuickTodo is a modern task management application (Todo List), focusing on smooth user experience, refined interface, and high performance. The application is designed to be minimalist, requiring no login or app downloads, suitable for personal use or feature demos.
+## About group
 
-## Tech Stack
+| | |
+|---|---|
+| **Group Name** | The Baka |
+| **Project Name** | QuickTodo |
+| **GitHub Repository** | https://github.com/hothong3k/QuickTodo |
+| **Video Demo** | *(Not yet)* |
+| **Submit Date** | 27/05/2026 |
 
-The project uses the following technologies:
+## Project Overview
+QuickTodo is a modern task management application (Todo List), focusing on smooth user experience, refined interface, and high performance. The application is designed to be minimalist, requiring no app downloads, suitable for personal use or feature demos. Users can either use some basic features when they are Guest, or logged in to use more advance features (add description, subtasks, due-date).
 
-- **Framework**: [Next.js 16 (App Router)](https://nextjs.org/) - Powerful full-stack React framework.
-- **Language**: [TypeScript](https://www.typescriptlang.org/) - Ensures type safety and clean code.
-- **Database ODM**: [Mongoose](https://mongoosejs.com/) - Easily connect and manage MongoDB data.
-- **Database**: [MongoDB](https://www.mongodb.com/) - Flexible NoSQL database.
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) - Utility-first CSS framework for rapid UI design.
-- **Authentication**: [NextAuth](https://next-auth.js.org/) - Authentication for Next.js.
-- **UI State Management**: [Zustand](https://zustand.dev/) - Simple, fast, and scalable state management.
+**Tech stack:**
 
-## User Manual (Workflow)
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js, React, TypeScript, Tailwind CSS, next-themes, Zustand (localStorage), lucide-react |
+| Backend | Next.js App Router, Server Actions, Route Handlers, NextAuth.js |
+| Database | MongoDB, Mongoose |
+| Deploy | Vercel |
 
-The application provides a simple and intuitive workflow:
+**Main features:**
 
-1.  **Add task**: Enter the task title in the input field, select a priority level (P1 to P4 by color), and press "Add".
-2.  **Manage status**: Click the checkbox next to each task to mark it as completed or uncompleted.
-3.  **Edit**: Click directly on the task title to modify the content or change the priority level.
-4.  **Delete task**: Use the trash icon to remove tasks that are no longer needed.
-5.  **Switch interface**: Use the toggle button in the corner of the screen to switch between Light and Dark modes.
+- Make todo quickly and level it by 4 stage ( 1 - important - to 4 - not important - )
+- Quick filter todos by level
+- Add description to todos
 
-## System Architecture Overview
-
-The system architecture is built according to the modern Next.js model:
-
-- **Frontend & Backend Unified**: Uses Next.js App Router to combine both the interface and data processing logic into a single project.
-- **Server Components**: Defaults to using Server Components to fetch data from MongoDB via Mongoose.
-- **Server Actions**: Processes CRUD (Create, Read, Update, Delete) operations directly from the client without going through traditional API endpoints, making the code more concise and secure.
-- **Data Modeling**: Data is stored in MongoDB with a flexible structure, strictly managed by the Mongoose Schema.
-
-## Folder Structure
-
-```
-quicktodo/
-├── public/               # Static assets (images, icons, fonts)
-│   ├── tasks.md
-│   └── ui-changes-plan.md
-├── src/
-│   ├── actions/          # Server Actions for server-side logic (CRUD Todo)
-│   │   └── todo-actions.ts
-│   ├── app/              # App Router: Pages, Layouts, and API routes
-│   │   ├── api/
-│   │   │   └── auth/     # Authentication routes (NextAuth, Register)
-│   │   ├── auth/         # Login and registration UI
-│   │   ├── contact/      # Contact page
-│   │   ├── todo/         # Main Todo list page
-│   │   ├── favicon.ico
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   └── page.tsx      # Landing page
-│   ├── components/       # Shared UI components
-│   │   ├── auth-button.tsx
-│   │   ├── header.tsx
-│   │   ├── priority-picker.tsx
-│   │   ├── session-provider.tsx
-│   │   ├── theme-provider.tsx
-│   │   ├── theme-toggle.tsx
-│   │   ├── todo-client-wrapper.tsx
-│   │   ├── todo-form.tsx
-│   │   ├── todo-item.tsx
-│   │   └── todo-list.tsx
-│   ├── lib/              # Libraries and configurations (Database, Auth)
-│   │   ├── auth.ts
-│   │   ├── mongodb-client.ts
-│   │   └── mongoose.ts
-│   ├── models/           # Mongoose schema definitions
-│   │   └── Todo.ts
-│   ├── store/            # Local state management (Zustand) when not logged in
-│   │   └── todo-store.ts
-│   └── types/            # TypeScript interfaces/types definitions
-│       └── index.ts
-├── .env                  # Environment variables storage (Secrets, URI)
-├── next.config.ts        # Next.js configuration
-├── package.json          # Project dependencies and scripts
-├── tailwind.config.ts    # Tailwind CSS configuration
-└── tsconfig.json         # TypeScript compiler configuration
-
-```
+![Make quick todo](public/feature-1.png)
+![Level Filter](public/feature-2.png)
+![Add description](public/feature-3.png)
 
 ## System Installation and Deployment Guide
 
-### System Requirements
+**System Requirements:**
 - Node.js 22 or higher.
 - A MongoDB account (Atlas) or a locally running MongoDB.
 
-### Installation
+**Installation**
 1.  **Clone repository**:
     ```bash
     git clone <repository-url>
@@ -123,13 +73,7 @@ quicktodo/
     npx prisma db push
     ```
 
-### Deployment
-The application can be easily deployed on platforms like Vercel:
-1. Connect the repository with Vercel.
-2. Add the `DATABASE_URL` environment variable.
-3. Vercel will automatically build and deploy the application.
-
-## Running the Application
+**Running the Application**
 
 To run the application in development mode:
 
@@ -144,7 +88,7 @@ yarn dev
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to experience it.
+Open [http://localhost:3000] in your browser to experience it.
 
 To build the project for a production environment:
 
@@ -162,23 +106,376 @@ pnpm build
 pnpm start
 ```
 
-## Notes and Limitations
+**Deployment**
+The application can be easily deployed on platforms like Vercel:
+1. Connect the repository with Vercel.
+2. Add the `DATABASE_URL` environment variable.
+3. Vercel will automatically build and deploy the application.
 
-- **Network connection**: An active Internet connection is required if using MongoDB Atlas.
-- **Browser**: Best supported on modern browsers (Chrome, Edge, Firefox, Safari).
-- **LocalStorage (Unauthenticated)**: When not logged in, data is stored only in the browser's `localStorage`. This means:
-    - Data is not synced across different devices or browsers.
-    - Data only stored in the device that was used to create it. So logged in means two separate list of data. (Will figure solution later)
-    - Clearing browser cache or data will result in the loss of all tasks.
-    - It is recommended to log in for persistent storage and multi-device synchronization.
-- **Future Updates**: New features such as categories, due dates, and detailed user profiles are planned for subsequent versions.
+---
 
-## Documentation Deliverables
+## Task 1 — Project Planning & Teamwork
 
-- Overview of the QuickTodo project.
-- List of technologies used (Tech stack).
-- Application usage workflow (User Manual).
-- System architecture overview.
-- Installation and deployment guide (Installation & Deployment).
-- Application operation guide (Running the Application).
-- System notes and limitations.
+### (a) Roles
+
+Group has only one member - Duy Thống, who is in charge for: Frontend - Backend - Database - Deploy
+
+### (b) Wireframe
+
+- **Tool used:** Figma Make
+- **Page designed:**
+  - [x] Homepage
+  - [x] About
+  - [x] Todo
+
+![Homepage design](<public/design-1.png>)
+![About design](public/design-2.png)
+![Todo design](public/design-3.png)
+
+### (c) Project Plan
+
+**Milestones:**
+
+| Milestone | Deadline | State |
+|---|---|---|
+| Complete Design | 02/05 | Completed, right on time
+| Setup GitHub & database schema | 08/05 | Completed, right on time
+| Complete Frontend | 08/05 | Completed, right on time
+| Complete Backend | 08/05 | Completed, right on time
+| Add some features | 16/05 | Ongoing (update later)
+| Optimization & peer review | 17/05 | Ongoing
+| Submit | 22/05 | Ongoing |
+
+### (d) GitHub Repository
+
+- **Repository link:** (https://github.com/hothong3k/QuickTodo)
+
+### (e) Working process on Github
+
+The project uses a GitHub Issue-based workflow so every change has a clear purpose and can be reviewed before being merged.
+
+**Workflow:**
+
+1. Create a GitHub Issue for each feature, bug fix, documentation update, or improvement.
+2. Create a new branch from the issue, using a short branch name that matches the work scope.
+3. Implement the changes locally and commit them with the Gitmoji + Conventional Commits format.
+4. Push the branch to the remote repository.
+5. Open a Pull Request from the issue branch into the main branch.
+6. Review the Pull Request, check file changes, and resolve merge conflicts if GitHub reports any.
+7. Merge the Pull Request after the changes are confirmed and the branch has no conflicts.
+
+**Commit convention:**
+
+Commit messages follow the Conventional Commits format with Gitmoji:
+
+```txt
+<emoji> <type>(<scope>): <description>
+```
+
+- The commit type describes the purpose of the change, such as `feat`, `fix`, `docs`, `refactor`, `style`, `build`, `chore`, or `test`.
+- The scope is written in English and identifies the affected area, such as `todo`, `auth`, `deps`, `README`, or `ui`.
+- The description is written in English, uses imperative mood, does not start with a capital letter, and does not end with a period.
+- When a commit completes or relates to a GitHub Issue, the commit body or footer references it with `Closes #issue-number`, `Fixes #issue-number`, `Resolves #issue-number`, or `References #issue-number`.
+
+**Pull Request workflow:**
+
+- Each Pull Request is linked to the related GitHub Issue.
+- The Pull Request description summarizes what changed and why the change was needed.
+- Before merging, GitHub is used to check whether the branch has conflicts with the target branch.
+- If conflicts exist, they are resolved on the issue branch, pushed again to remote, and rechecked in the Pull Request.
+- After the Pull Request is clean and the changes are reviewed, it is merged into the main branch.
+
+```
+✨ feat(api): add user registration endpoint
+♻️ refactor(todo): update todoform to accept handler props
+🏗️ build(deps): update lockfile for vercel deployment fix
+
+```
+![Commit messages](public/commit-messages.png)
+---
+
+## Task 2 — Implement User Interface
+
+### (a) Pages built
+
+The website is built with the Next.js App Router. Each route has a focused role in the user flow, from introducing the product to managing todos and authentication.
+
+| Page | URL / Route | Description | Implementer |
+|---|---|---|---|
+| Home | `/` | Landing page with QuickTodo introduction, main call-to-action buttons, feature cards, and a short usage guide.
+| Contact | `/contact` | Personal/about page with avatar, email, GitHub, LinkedIn, and navigation back to Home or Todo.
+| Todo | `/todo` | Main task management page. Guests use local browser storage, while logged-in users load and sync todos from MongoDB.
+| Sign in | `/auth/signin` | Login page with credentials login, Google login, password visibility toggle, loading state, and validation messages.
+| Register | `/auth/register` | Account registration page with name, email, password validation, password visibility toggle, and auto-login after successful registration.
+
+**Main UI screenshots:**
+
+![Home](public/Home.png)
+![Contact](public/Contact.png)
+![Todo](public/Todo.png)
+![Sign in](public/Signin.png)
+![Register](public/Register.png)
+
+### (b) Tailwind CSS
+
+Tailwind CSS is integrated through `src/app/globals.css` with `@import "tailwindcss";`. The project uses Tailwind utility classes directly in React components to build layouts, spacing, typography, cards, buttons, forms, hover states, and responsive behavior.
+
+The design also uses CSS variables for theme tokens:
+
+- `--background`, `--foreground`, `--card-bg`, `--card-border`, `--muted`, `--muted-foreground`, and `--title` are defined in `:root`.
+- The `.dark` class overrides these variables for dark mode.
+- Tailwind classes such as `bg-[var(--background)]`, `text-[var(--foreground)]`, and `border-[var(--card-border)]` keep components consistent across light and dark themes.
+
+**Main Tailwind usage in the project:**
+
+- Responsive layouts: `flex`, `grid`, `grid-cols-1`, `md:grid-cols-3`, `sm:flex-row`, `lg:hidden`, `hidden lg:block`.
+- Page containers: `mx-auto`, `max-w-2xl`, `max-w-4xl`, `px-4`, `py-12`, `pt-24`, `pb-16`.
+- Cards and panels: `rounded-xl`, `rounded-2xl`, `border`, `shadow-sm`, `shadow-xl`, `bg-[var(--card-bg)]`.
+- Form styling: `h-12`, `h-14`, `pl-10`, `pr-12`, `outline-none`, `focus:border-blue-500`, `focus:ring-4`, `disabled:opacity-50`.
+- Interaction states: `hover:bg-[var(--muted)]`, `hover:text-blue-500`, `active:scale-[0.98]`, `transition-all`, `duration-200`.
+- Dark mode: `dark:bg-zinc-900`, `dark:border-zinc-800`, `dark:text-zinc-100`, `dark:hover:bg-zinc-800`.
+- Priority colors: `bg-red-500`, `bg-orange-500`, `bg-blue-500`, `bg-zinc-400`, plus matching border and ring colors.
+
+### (c) Interactive features
+
+The interactive behavior is implemented with React client components, `useState`, `useEffect`, `useRef`, `useTransition`, Zustand for guest todos, NextAuth for authentication, and Server Actions for logged-in todo CRUD.
+
+| Feature | Description | File / Component
+|---|---|---|---|
+| Add todo | User enters a title, chooses a priority level, and submits the form. The button shows a loading state while the action is pending. | `src/components/todo-form.tsx`, `src/components/todo-client-wrapper.tsx` |
+| Priority picker | Popover menu for choosing priority from level 1 to level 4 with color indicators and selected-state feedback. | `src/components/priority-picker.tsx`, `src/components/todo-form.tsx` |
+| Priority filter | Dropdown filter on the Todo page lets users filter visible tasks by one or more priority levels and clear the filter. | `src/components/todo-client-wrapper.tsx` |
+| Toggle completion | Checkbox-style button marks a todo as completed or uncompleted, with visual line-through state. | `src/components/todo-item.tsx`, `src/components/todo-client-wrapper.tsx` |
+| Todo detail panel | Clicking a todo opens its detail view. On mobile/tablet it appears inline, and on desktop it opens as a right-side panel. | `src/components/todo-item.tsx` |
+| Edit todo title | Users can edit the todo title, save it, cancel it, press Enter to save, or press Escape to cancel. | `src/components/todo-item.tsx` |
+| Edit description | Logged-in users can add or update a todo description. Guests receive a login notice when trying to use this feature. | `src/components/todo-item.tsx`, `src/components/todo-client-wrapper.tsx` |
+| Delete todo | Trash button removes a todo and displays a loading spinner while the action is pending. | `src/components/todo-item.tsx`, `src/components/todo-client-wrapper.tsx` |
+| Guest/local mode | Guests can create, update, delete, and filter todos stored in browser localStorage through Zustand. | `src/store/todo-store.ts`, `src/components/todo-client-wrapper.tsx` |
+| Authenticated sync mode | Logged-in users load todos from MongoDB and update them through Server Actions. | `src/app/todo/page.tsx`, `src/actions/todo-actions.ts`, `src/components/todo-client-wrapper.tsx` |
+| Theme toggle | Button switches between light and dark themes using `next-themes`. | `src/components/theme-toggle.tsx`, `src/components/theme-provider.tsx` |
+| Auth dropdown | Logged-in users can open an account dropdown, view account information, navigate to profile, or sign out. | `src/components/auth-button.tsx` |
+| Sign in form | Credentials login, Google login, validation errors, password visibility toggle, and loading states. | `src/app/auth/signin/page.tsx` |
+| Register form | User registration with validation, password visibility toggle, API submission, and auto-login after success. | `src/app/auth/register/page.tsx`, `src/app/api/auth/register/route.ts` |
+
+**How the interactive elements were tested manually:**
+
+- Add a todo with each priority level, then confirm the list order and color indicators.
+- Toggle a todo complete/incomplete and confirm the line-through state changes.
+- Open the filter dropdown, select multiple priorities, clear filters, and check the visible list.
+- Open a todo detail panel, edit the title, save, cancel, and test Enter/Escape behavior.
+- Try editing description as a guest and confirm the login notice appears.
+- Sign in, create todos, update description/priority/title, delete todos, and refresh to confirm MongoDB persistence.
+- Switch light/dark mode and confirm the UI colors update across Header, Todo, Contact, and Auth pages.
+
+### (d) Interface on multiple devices
+
+- [x] Mobile (< 768px)
+- [x] Tablet (768px – 1024px)
+- [x] Desktop (> 1024px)
+
+![Tablet](public/tablet.png)
+![Laptop](public/laptop.png)
+![Mobile](public/mobile.png)
+
+---
+
+## Task 3 — Database Integration & Dynamic Content
+
+### (a) Database design
+
+The project uses MongoDB as the main database. Todo data is modeled with Mongoose, while authentication data is stored through the NextAuth MongoDB Adapter and the custom registration API.
+
+- **Database system:** MongoDB
+- **ODM / database driver:** Mongoose and MongoDB Node.js Driver
+- **Main application collection:** `todos`
+- **Authentication collections:** `users`, `accounts`, `sessions`, `verification_tokens`
+
+**Main collections:**
+
+| Collection | Description | Main fields |
+|---|---|---|
+| `todos` | Stores todo items that belong to authenticated users. Guest todos are not stored in MongoDB; they are stored in browser localStorage through Zustand. | `_id`, `title`, `description`, `isDone`, `priority`, `createdAt`, `userId` |
+| `users` | Stores user accounts created by credentials registration or Google login through NextAuth. | `_id`, `name`, `email`, `passwordHash`, `emailVerified`, `image`, `createdAt` |
+| `accounts` | Stores OAuth provider account information for NextAuth, mainly used for Google login. | `_id`, `userId`, `type`, `provider`, `providerAccountId`, `access_token` |
+| `sessions` | NextAuth session collection used by the MongoDB Adapter when database sessions are needed. The app currently uses JWT session strategy. | `_id`, `sessionToken`, `userId`, `expires` |
+| `verification_tokens` | NextAuth collection for verification token flows if they are enabled later. | `_id`, `identifier`, `token`, `expires` |
+
+**Todo schema:**
+
+| Field | Type | Description |
+|---|---|---|
+| `_id` | `ObjectId` | MongoDB document ID. Converted to `id` string before being passed to the UI. |
+| `title` | `String` | Todo title. Required and limited in the app to 100 characters. |
+| `description` | `String` | Optional detailed description. Defaults to an empty string and is limited in the app to 1000 characters. |
+| `isDone` | `Boolean` | Completion state. Defaults to `false`. |
+| `priority` | `Number` | Priority level from 1 to 4. Defaults to 4. |
+| `createdAt` | `Date` | Creation time. Defaults to the current date. |
+| `userId` | `String` | Authenticated user ID. Indexed for faster user-specific queries. |
+
+**Relationship overview:**
+
+```txt
+users._id 1 -> * todos.userId
+users._id 1 -> * accounts.userId
+users._id 1 -> * sessions.userId
+```
+
+### (b) Database connection
+
+- **Server-side technology:** Next.js App Router, Server Components, Server Actions, Route Handlers, NextAuth.js
+- **Database connection:** MongoDB connection string from environment variables
+- **Connection files:** `src/lib/mongoose.ts` and `src/lib/mongodb-client.ts`
+- **Main environment variable:** `MONGODB_URI`
+- **Fallback variable for Mongoose:** `MONGODB_URL`
+
+The project uses two MongoDB connection helpers:
+
+- `src/lib/mongoose.ts` connects Mongoose to MongoDB and caches the connection globally to avoid creating a new connection on every server request.
+- `src/lib/mongodb-client.ts` creates a cached MongoDB client promise for the NextAuth MongoDB Adapter.
+
+**Implemented CRUD operations for authenticated todos:**
+
+| Operation | Status | Implementation |
+|---|---|---|
+| Create | [x] | `addTodo(title, priority)` creates a new todo with the current `userId`. |
+| Read | [x] | `/todo` reads todos with `TodoModel.find({ userId })` and sorts by priority and creation date. |
+| Update | [x] | `toggleTodo`, `updateTodo`, `updateTodoDescription`, and `updatePriority` update existing todos. |
+| Delete | [x] | `deleteTodo(id)` removes a todo that belongs to the current user. |
+
+**Connection architecture:**
+
+```txt
+React UI
+  -> TodoClientWrapper client handlers
+  -> Next.js Server Actions / Server Component
+  -> connectDB()
+  -> Mongoose TodoModel
+  -> MongoDB
+```
+
+For guests, the same UI works without database access. Guest todos are handled by `src/store/todo-store.ts` and saved in browser localStorage. When a user signs in, the `/todo` page switches to authenticated mode and loads that user's todos from MongoDB.
+
+### (c) Dynamic content pages
+
+| Page | Displayed dynamic data | Query / Endpoint | Implementer |
+|---|---|---|---|
+| Todo | Shows the authenticated user's todo list from MongoDB, including title, description, completion state, priority, and created date. | Server Component query: `TodoModel.find({ userId }).sort({ priority: 1, createdAt: -1 })` in `src/app/todo/page.tsx` |
+| Todo actions | Creates, updates, toggles, filters, and deletes todo data. UI updates are handled optimistically before the server revalidates `/todo`. | Server Actions in `src/actions/todo-actions.ts` |
+| Sign in | Reads user account data by email for credentials login and validates password hash with `bcryptjs`. | NextAuth Credentials Provider in `src/lib/auth.ts` |
+| Register | Creates a new user document after validating input and checking duplicated email. | `POST /api/auth/register` in `src/app/api/auth/register/route.ts` |
+| Auth button / header | Shows login state, user name, email, avatar or initials, profile link, and sign-out action. | `useSession()` from NextAuth in `src/components/auth-button.tsx` |
+
+**Dynamic data screenshots:**
+
+![Todo page with dynamic data](public/feature-2.png)
+![Todo detail and interaction](public/feature-3.png)
+
+---
+
+## Task 4 — Optimization (Do Later)
+
+### (a) Check performance with Lighthouse
+
+> Chạy Lighthouse trước và sau khi tối ưu, đính kèm kết quả cả hai lần.
+
+**Kết quả trước khi tối ưu:**
+
+| Metric | Điểm |
+|---|---|
+| Performance | *(điểm)* |
+| Accessibility | *(điểm)* |
+| Best Practices | *(điểm)* |
+| SEO | *(điểm)* |
+
+*(Chèn ảnh chụp màn hình Lighthouse — trước)*
+
+**Các vấn đề đã xác định và cách khắc phục:**
+
+| Vấn đề | Hành động khắc phục |
+|---|---|
+| *(VD: Images not optimized)* | *(VD: Compress images, add width/height attributes)* |
+| | |
+
+**Kết quả sau khi tối ưu:**
+
+| Metric | Điểm |
+|---|---|
+| Performance | *(điểm)* |
+| Accessibility | *(điểm)* |
+| Best Practices | *(điểm)* |
+| SEO | *(điểm)* |
+
+*(Chèn ảnh chụp màn hình Lighthouse — sau)*
+
+### (b) Track errors and user behaviors
+
+> Mô tả cách nhóm đã cài đặt và cấu hình các công cụ monitoring.
+
+**Google Analytics:**
+- [ ] Đã tích hợp
+- **Tracking ID / Measurement ID:** `*(G-XXXXXXXXXX)*`
+- *(Mô tả ngắn cách tích hợp)*
+
+*(Chèn ảnh chụp màn hình Google Analytics dashboard)*
+
+**Sentry (hoặc tương đương):**
+- [ ] Đã tích hợp
+- **Tool sử dụng:** *(Sentry / ...)*
+- **Project DSN / Config:** *(link hoặc mô tả)*
+- *(Mô tả ngắn loại errors đang được monitor)*
+
+*(Chèn ảnh chụp màn hình Sentry dashboard hoặc error log)*
+
+---
+
+
+
+## Task 5 — UI/UX Peer Review & Evaluation (Do Later)
+
+### (a) Feedbacks from other groups
+
+> Trình bày nội dung feedback nhóm đã gửi cho các nhóm được review.
+
+**Nhóm được review #1:**
+
+- **Tên nhóm / Dự án:** *(tên)*
+- **Link dự án:** *(link)*
+
+| Khía cạnh | Điểm mạnh | Gợi ý cải thiện |
+|---|---|---|
+| Usability | *(nhận xét)* | *(gợi ý)* |
+| Aesthetics | *(nhận xét)* | *(gợi ý)* |
+| User-Friendliness | *(nhận xét)* | *(gợi ý)* |
+
+**Nhóm được review #2:**
+
+- **Tên nhóm / Dự án:** *(tên)*
+- **Link dự án:** *(link)*
+
+| Khía cạnh | Điểm mạnh | Gợi ý cải thiện |
+|---|---|---|
+| Usability | *(nhận xét)* | *(gợi ý)* |
+| Aesthetics | *(nhận xét)* | *(gợi ý)* |
+| User-Friendliness | *(nhận xét)* | *(gợi ý)* |
+
+### (b) Solve feedbacks from other groups
+
+> Tóm tắt feedback nhóm nhận được và quyết định của nhóm đối với từng ý kiến.
+
+| Feedback | Nguồn (nhóm nào) | Quyết định | Lý do / Commit |
+|---|---|---|---|
+| *(mô tả feedback)* | *(tên nhóm)* | *(Đã implement / Không implement)* | *(lý do hoặc link commit)* |
+| | | | |
+| | | | |
+
+*(Chèn ảnh chụp màn hình trước/sau của những thay đổi đã implement)*
+
+---
+
+
+
+## Deliverables Checklist
+
+- [x] **Source code trên GitHub** — repository public hoặc đã share với giảng viên
+- [ ] **README.md** bao gồm: hướng dẫn cài đặt, tổng quan project, danh sách tính năng có screenshots, ERD
+- [ ] **Video demo** — tối đa 10 phút, tối thiểu 720p, không để private
