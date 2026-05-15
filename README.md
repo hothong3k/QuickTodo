@@ -7,7 +7,7 @@
 | **Group Name** | The Baka |
 | **Project Name** | QuickTodo |
 | **GitHub Repository** | https://github.com/hothong3k/QuickTodo |
-| **Video Demo** | *(Not yet)* |
+| **Video Demo** | https://drive.google.com/file/d/14TlHNwooYsrzDmoyMJQ6pkaVOBkVX0dY/view?usp=sharing |
 | **Submit Date** | 27/05/2026 |
 
 ## Project Overview
@@ -27,10 +27,12 @@ QuickTodo is a modern task management application (Todo List), focusing on smoot
 - Make todo quickly and level it by 4 stage ( 1 - important - to 4 - not important - )
 - Quick filter todos by level
 - Add description to todos
+- Add due date to todos, deadline tags when set
+- Add subtasks to todos, notify when all subtasks are done
 
-![Make quick todo](public/feature-1.png)
+![Make quick todo and set level](public/feature-1.png)
 ![Level Filter](public/feature-2.png)
-![Add description](public/feature-3.png)
+![Add description, due date, deadline tags, subtasks](public/feature-5.png)
 
 ## System Installation and Deployment Guide
 
@@ -127,10 +129,12 @@ Group has only one member - Duy Thống, who is in charge for: Frontend - Backen
   - [x] Homepage
   - [x] About
   - [x] Todo
+  - [x] My Account
 
-![Homepage design](<public/design-1.png>)
-![About design](public/design-2.png)
-![Todo design](public/design-3.png)
+![Home page design](<public/design-1.png>)
+![About page design](public/design-2.png)
+![Todo page design](public/design-3.png)
+![My Account design](public/design-4.png)
 
 ### (c) Project Plan
 
@@ -142,7 +146,7 @@ Group has only one member - Duy Thống, who is in charge for: Frontend - Backen
 | Setup GitHub & database schema | 08/05 | Completed, right on time
 | Complete Frontend | 08/05 | Completed, right on time
 | Complete Backend | 08/05 | Completed, right on time
-| Add some features | 16/05 | Ongoing (update later)
+| Add some features | 16/05 | Completed, right on time
 | Optimization & peer review | 17/05 | Ongoing
 | Submit | 22/05 | Ongoing |
 
@@ -189,7 +193,8 @@ Commit messages follow the Conventional Commits format with Gitmoji:
 ✨ feat(api): add user registration endpoint
 ♻️ refactor(todo): update todoform to accept handler props
 🏗️ build(deps): update lockfile for vercel deployment fix
-
+💄 style(contact): update contact page presentation
+📝 docs(assets): add mobile responsive screenshot
 ```
 ![Commit messages](public/commit-messages.png)
 ---
@@ -207,6 +212,7 @@ The website is built with the Next.js App Router. Each route has a focused role 
 | Todo | `/todo` | Main task management page. Guests use local browser storage, while logged-in users load and sync todos from MongoDB.
 | Sign in | `/auth/signin` | Login page with credentials login, Google login, password visibility toggle, loading state, and validation messages.
 | Register | `/auth/register` | Account registration page with name, email, password validation, password visibility toggle, and auto-login after successful registration.
+| My Account | `/profile` | Basic account management for account type, name, email, edit information and change password
 
 **Main UI screenshots:**
 
@@ -215,6 +221,7 @@ The website is built with the Next.js App Router. Each route has a focused role 
 ![Todo](public/Todo.png)
 ![Sign in](public/Signin.png)
 ![Register](public/Register.png)
+![My Account](public/Myaccount.png)
 
 ### (b) Tailwind CSS
 
@@ -240,8 +247,8 @@ The design also uses CSS variables for theme tokens:
 
 The interactive behavior is implemented with React client components, `useState`, `useEffect`, `useRef`, `useTransition`, Zustand for guest todos, NextAuth for authentication, and Server Actions for logged-in todo CRUD.
 
-| Feature | Description | File / Component
-|---|---|---|---|
+| Feature | Description | File / Component |
+|---|---|---|
 | Add todo | User enters a title, chooses a priority level, and submits the form. The button shows a loading state while the action is pending. | `src/components/todo-form.tsx`, `src/components/todo-client-wrapper.tsx` |
 | Priority picker | Popover menu for choosing priority from level 1 to level 4 with color indicators and selected-state feedback. | `src/components/priority-picker.tsx`, `src/components/todo-form.tsx` |
 | Priority filter | Dropdown filter on the Todo page lets users filter visible tasks by one or more priority levels and clear the filter. | `src/components/todo-client-wrapper.tsx` |
@@ -283,21 +290,22 @@ The interactive behavior is implemented with React client components, `useState`
 
 ### (a) Database design
 
-The project uses MongoDB as the main database. Todo data is modeled with Mongoose, while authentication data is stored through the NextAuth MongoDB Adapter and the custom registration API.
+The project uses MongoDB as the main database. Todo data is modeled with Mongoose, while authentication and account data are stored through the NextAuth MongoDB Adapter plus custom account actions.
 
 - **Database system:** MongoDB
 - **ODM / database driver:** Mongoose and MongoDB Node.js Driver
 - **Main application collection:** `todos`
 - **Authentication collections:** `users`, `accounts`, `sessions`, `verification_tokens`
+- **Guest data:** localStorage through Zustand, not MongoDB
 
 **Main collections:**
 
 | Collection | Description | Main fields |
 |---|---|---|
-| `todos` | Stores todo items that belong to authenticated users. Guest todos are not stored in MongoDB; they are stored in browser localStorage through Zustand. | `_id`, `title`, `description`, `isDone`, `priority`, `createdAt`, `userId` |
-| `users` | Stores user accounts created by credentials registration or Google login through NextAuth. | `_id`, `name`, `email`, `passwordHash`, `emailVerified`, `image`, `createdAt` |
+| `todos` | Stores todos for authenticated users. It now supports descriptions, due dates, and embedded subtasks. | `_id`, `title`, `description`, `dueDate`, `subtasks`, `isDone`, `priority`, `createdAt`, `userId` |
+| `users` | Stores users created by credentials registration or Google login. Credentials users also have `passwordHash`. | `_id`, `name`, `email`, `passwordHash`, `emailVerified`, `image`, `createdAt` |
 | `accounts` | Stores OAuth provider account information for NextAuth, mainly used for Google login. | `_id`, `userId`, `type`, `provider`, `providerAccountId`, `access_token` |
-| `sessions` | NextAuth session collection used by the MongoDB Adapter when database sessions are needed. The app currently uses JWT session strategy. | `_id`, `sessionToken`, `userId`, `expires` |
+| `sessions` | NextAuth session collection available through the adapter. The app currently uses JWT session strategy. | `_id`, `sessionToken`, `userId`, `expires` |
 | `verification_tokens` | NextAuth collection for verification token flows if they are enabled later. | `_id`, `identifier`, `token`, `expires` |
 
 **Todo schema:**
@@ -307,10 +315,33 @@ The project uses MongoDB as the main database. Todo data is modeled with Mongoos
 | `_id` | `ObjectId` | MongoDB document ID. Converted to `id` string before being passed to the UI. |
 | `title` | `String` | Todo title. Required and limited in the app to 100 characters. |
 | `description` | `String` | Optional detailed description. Defaults to an empty string and is limited in the app to 1000 characters. |
+| `dueDate` | `String \| null` | Optional due date stored as a normalized date string, or `null` when no deadline is set. |
+| `subtasks` | `Array` | Embedded subtask list. Defaults to an empty array and is limited in the app to 50 items. |
 | `isDone` | `Boolean` | Completion state. Defaults to `false`. |
 | `priority` | `Number` | Priority level from 1 to 4. Defaults to 4. |
 | `createdAt` | `Date` | Creation time. Defaults to the current date. |
 | `userId` | `String` | Authenticated user ID. Indexed for faster user-specific queries. |
+
+**Subtask schema:**
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | `String` | Client-safe subtask ID generated with `crypto.randomUUID()`. |
+| `title` | `String` | Subtask title. Required and limited in the app to 100 characters. |
+| `isDone` | `Boolean` | Subtask completion state. Defaults to `false`. |
+| `createdAt` | `Date` | Subtask creation time. Defaults to the current date. |
+
+**User/account fields used by the app:**
+
+| Field | Type | Description |
+|---|---|---|
+| `_id` | `ObjectId` | User ID used by NextAuth and referenced by todos through `userId`. |
+| `name` | `String` | Display name shown in the header and account page. |
+| `email` | `String` | Login email. It is normalized and checked for duplicates before updates. |
+| `passwordHash` | `String` | Bcrypt hash for credentials accounts. Google accounts do not use this field. |
+| `emailVerified` | `Date \| null` | NextAuth-compatible email verification field. |
+| `image` | `String \| null` | Avatar URL from Google or null for credentials accounts. |
+| `createdAt` | `Date` | Registration time for credentials accounts. |
 
 **Relationship overview:**
 
@@ -319,6 +350,8 @@ users._id 1 -> * todos.userId
 users._id 1 -> * accounts.userId
 users._id 1 -> * sessions.userId
 ```
+
+![ER Diagram](public/er-diagram.png)
 
 ### (b) Database connection
 
@@ -339,8 +372,28 @@ The project uses two MongoDB connection helpers:
 |---|---|---|
 | Create | [x] | `addTodo(title, priority)` creates a new todo with the current `userId`. |
 | Read | [x] | `/todo` reads todos with `TodoModel.find({ userId })` and sorts by priority and creation date. |
-| Update | [x] | `toggleTodo`, `updateTodo`, `updateTodoDescription`, and `updatePriority` update existing todos. |
+| Update | [x] | `toggleTodo`, `updateTodo`, `updateTodoDescription`, `updateDueDate`, and `updatePriority` update existing todos. |
 | Delete | [x] | `deleteTodo(id)` removes a todo that belongs to the current user. |
+
+**Implemented nested subtask operations:**
+
+| Operation | Status | Implementation |
+|---|---|---|
+| Create | [x] | `addSubtask(todoId, title)` appends an embedded subtask to an existing todo. |
+| Read | [x] | `/todo` maps each todo's `subtasks` array into the client `Todo` type. |
+| Update | [x] | `toggleSubtask` and `updateSubtask` update a subtask inside the parent todo document. |
+| Delete | [x] | `deleteSubtask(todoId, subtaskId)` filters the subtask out of the parent todo. |
+
+**Implemented account operations:**
+
+| Operation | Status | Implementation |
+|---|---|---|
+| Register | [x] | `POST /api/auth/register` creates a credentials user with a bcrypt `passwordHash`. |
+| Login | [x] | NextAuth Credentials Provider reads `users` by email and compares `passwordHash`. |
+| Google auth | [x] | NextAuth Google Provider stores OAuth user data in `users` and `accounts`. |
+| Read profile | [x] | `getCurrentAccountProfile()` reads `users` and checks `accounts` to detect Google vs credentials accounts. |
+| Update profile | [x] | `updateAccountInfo()` updates credentials users' `name` and `email` after duplicate-email validation. |
+| Change password | [x] | `changePassword()` hashes a new password and updates `users.passwordHash`. |
 
 **Connection architecture:**
 
@@ -353,22 +406,25 @@ React UI
   -> MongoDB
 ```
 
-For guests, the same UI works without database access. Guest todos are handled by `src/store/todo-store.ts` and saved in browser localStorage. When a user signs in, the `/todo` page switches to authenticated mode and loads that user's todos from MongoDB.
+For guests, the same Todo UI works without database access. Guest todos are handled by `src/store/todo-store.ts` and saved in browser localStorage. Guest mode supports basic todo fields only; authenticated mode persists descriptions, due dates, and subtasks in MongoDB.
 
 ### (c) Dynamic content pages
 
-| Page | Displayed dynamic data | Query / Endpoint | Implementer |
-|---|---|---|---|
-| Todo | Shows the authenticated user's todo list from MongoDB, including title, description, completion state, priority, and created date. | Server Component query: `TodoModel.find({ userId }).sort({ priority: 1, createdAt: -1 })` in `src/app/todo/page.tsx` |
-| Todo actions | Creates, updates, toggles, filters, and deletes todo data. UI updates are handled optimistically before the server revalidates `/todo`. | Server Actions in `src/actions/todo-actions.ts` |
-| Sign in | Reads user account data by email for credentials login and validates password hash with `bcryptjs`. | NextAuth Credentials Provider in `src/lib/auth.ts` |
-| Register | Creates a new user document after validating input and checking duplicated email. | `POST /api/auth/register` in `src/app/api/auth/register/route.ts` |
+| Page | Displayed dynamic data | Query / Endpoint |
+|---|---|---|
+| Todo | Shows the authenticated user's todo list from MongoDB, including title, description, due date, subtasks, completion state, priority, and created date. | Server Component query: `TodoModel.find({ userId }).sort({ priority: 1, createdAt: -1 })` in `src/app/todo/page.tsx` |
+| Todo actions | Creates, updates, toggles, filters, adds due dates, manages subtasks, and deletes todo data. UI updates are handled optimistically before `/todo` is revalidated. | Server Actions in `src/actions/todo-actions.ts` |
+| Sign in | Reads user account data by email for credentials login and validates password hash with `bcryptjs`; Google login is handled by NextAuth. | NextAuth providers in `src/lib/auth.ts` |
+| Register | Creates a credentials user after validating input, checking duplicate email, and hashing the password. | `POST /api/auth/register` in `src/app/api/auth/register/route.ts` |
+| Profile | Displays account provider, name, and email; redirects unauthenticated users to sign in. | `getCurrentAccountProfile()` in `src/lib/account.ts` and `src/app/profile/page.tsx` |
+| Account update | Updates credentials users' name/email and refreshes the current NextAuth session data. | `updateAccountInfo()` in `src/actions/account-actions.ts` |
+| Password change | Updates credentials users' `passwordHash`, then signs the user out so the next login uses the new password. | `changePassword()` in `src/actions/account-actions.ts` |
 | Auth button / header | Shows login state, user name, email, avatar or initials, profile link, and sign-out action. | `useSession()` from NextAuth in `src/components/auth-button.tsx` |
 
 **Dynamic data screenshots:**
 
 ![Todo page with dynamic data](public/feature-2.png)
-![Todo detail and interaction](public/feature-3.png)
+![Todo detail and interaction](public/feature-5.png)
 
 ---
 
@@ -478,4 +534,4 @@ For guests, the same UI works without database access. Guest todos are handled b
 
 - [x] **Source code trên GitHub** — repository public hoặc đã share với giảng viên
 - [ ] **README.md** bao gồm: hướng dẫn cài đặt, tổng quan project, danh sách tính năng có screenshots, ERD
-- [ ] **Video demo** — tối đa 10 phút, tối thiểu 720p, không để private
+- [x] **Video demo** — tối đa 10 phút, tối thiểu 720p, không để private
