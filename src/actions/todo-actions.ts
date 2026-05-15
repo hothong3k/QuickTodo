@@ -5,7 +5,12 @@ import { authOptions } from '@/lib/auth'
 import { connectDB } from '@/lib/mongoose'
 import TodoModel from '@/models/Todo'
 import { revalidatePath } from 'next/cache'
-import { TODO_DESCRIPTION_MAX_LENGTH, TODO_TITLE_MAX_LENGTH } from '@/types'
+import {
+  SUBTASK_MAX_COUNT,
+  SUBTASK_TITLE_MAX_LENGTH,
+  TODO_DESCRIPTION_MAX_LENGTH,
+  TODO_TITLE_MAX_LENGTH,
+} from '@/types'
 import { normalizeDueDate } from '@/lib/due-date'
 
 async function getUserId(): Promise<string | null> {
@@ -72,6 +77,95 @@ export async function updateDueDate(id: string, dueDate: string | null) {
     { _id: id, userId },
     { dueDate: cleanDueDate }
   )
+  revalidatePath('/todo')
+}
+
+// Thêm todo phụ
+export async function addSubtask(todoId: string, title: string) {
+  const cleanTitle = title.trim().slice(0, SUBTASK_TITLE_MAX_LENGTH)
+  if (!cleanTitle) return
+
+  const userId = await getUserId()
+  if (!userId) throw new Error('Unauthorized')
+  await connectDB()
+
+  const todo = await TodoModel.findOne({ _id: todoId, userId })
+  if (!todo) return
+
+  const subtasks = todo.subtasks ?? []
+  if (subtasks.length >= SUBTASK_MAX_COUNT) return
+
+  const createdAt = new Date()
+  const subtask = {
+    id: crypto.randomUUID(),
+    title: cleanTitle,
+    isDone: false,
+    createdAt,
+  }
+
+  subtasks.push(subtask)
+  todo.subtasks = subtasks
+  await todo.save()
+  revalidatePath('/todo')
+
+  return {
+    ...subtask,
+    createdAt: createdAt.toISOString(),
+  }
+}
+
+// Đổi trạng thái hoàn thành todo phụ
+export async function toggleSubtask(todoId: string, subtaskId: string) {
+  const userId = await getUserId()
+  if (!userId) throw new Error('Unauthorized')
+  await connectDB()
+
+  const todo = await TodoModel.findOne({ _id: todoId, userId })
+  if (!todo?.subtasks) return
+
+  const subtask = todo.subtasks.find((item) => item.id === subtaskId)
+  if (!subtask) return
+
+  subtask.isDone = !subtask.isDone
+  await todo.save()
+  revalidatePath('/todo')
+}
+
+// Cập nhật tiêu đề todo phụ
+export async function updateSubtask(
+  todoId: string,
+  subtaskId: string,
+  title: string
+) {
+  const cleanTitle = title.trim().slice(0, SUBTASK_TITLE_MAX_LENGTH)
+  if (!cleanTitle) return
+
+  const userId = await getUserId()
+  if (!userId) throw new Error('Unauthorized')
+  await connectDB()
+
+  const todo = await TodoModel.findOne({ _id: todoId, userId })
+  if (!todo?.subtasks) return
+
+  const subtask = todo.subtasks.find((item) => item.id === subtaskId)
+  if (!subtask) return
+
+  subtask.title = cleanTitle
+  await todo.save()
+  revalidatePath('/todo')
+}
+
+// Xoá todo phụ
+export async function deleteSubtask(todoId: string, subtaskId: string) {
+  const userId = await getUserId()
+  if (!userId) throw new Error('Unauthorized')
+  await connectDB()
+
+  const todo = await TodoModel.findOne({ _id: todoId, userId })
+  if (!todo?.subtasks) return
+
+  todo.subtasks = todo.subtasks.filter((item) => item.id !== subtaskId)
+  await todo.save()
   revalidatePath('/todo')
 }
 
