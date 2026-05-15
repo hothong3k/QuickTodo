@@ -4,23 +4,29 @@ import type { Todo } from '@/types'
 interface TodoListProps {
   todos: Todo[]
   isLoggedIn: boolean
+  today: string
   onToggle: (id: string) => Promise<void>
   onUpdate: (id: string, title: string) => Promise<void>
   onUpdateDescription: (id: string, description: string) => Promise<void>
+  onUpdateDueDate: (id: string, dueDate: string | null) => Promise<void>
   onDelete: (id: string) => Promise<void>
   onPriorityChange: (id: string, priority: number) => Promise<void>
   onRequireLoginForDescription: () => void
+  onRequireLoginForDueDate: () => void
 }
 
 export default function TodoList({
   todos,
   isLoggedIn,
+  today,
   onToggle,
   onUpdate,
   onUpdateDescription,
+  onUpdateDueDate,
   onDelete,
   onPriorityChange,
   onRequireLoginForDescription,
+  onRequireLoginForDueDate,
 }: TodoListProps) {
   if (todos.length === 0) {
     return (
@@ -43,12 +49,15 @@ export default function TodoList({
           key={todo.id}
           todo={todo}
           isLoggedIn={isLoggedIn}
+          today={today}
           onToggle={onToggle}
           onUpdate={onUpdate}
           onUpdateDescription={onUpdateDescription}
+          onUpdateDueDate={onUpdateDueDate}
           onDelete={onDelete}
           onPriorityChange={onPriorityChange}
           onRequireLoginForDescription={onRequireLoginForDescription}
+          onRequireLoginForDueDate={onRequireLoginForDueDate}
         />
       ))}
     </div>
