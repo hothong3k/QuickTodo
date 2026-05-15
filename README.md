@@ -432,59 +432,49 @@ For guests, the same Todo UI works without database access. Guest todos are hand
 
 ### (a) Check performance with Lighthouse
 
-> Chạy Lighthouse trước và sau khi tối ưu, đính kèm kết quả cả hai lần.
-
-**Kết quả trước khi tối ưu:**
+**Result on Mobile:**
 
 | Metric | Điểm |
 |---|---|
-| Performance | *(điểm)* |
-| Accessibility | *(điểm)* |
-| Best Practices | *(điểm)* |
-| SEO | *(điểm)* |
+| Performance | 99 |
+| Accessibility | 95 |
+| Best Practices | 100 |
+| SEO | 100 |
 
-*(Chèn ảnh chụp màn hình Lighthouse — trước)*
+![Lighthouse on Mobile](public/lighthouse-mobile.png)
 
-**Các vấn đề đã xác định và cách khắc phục:**
-
-| Vấn đề | Hành động khắc phục |
-|---|---|
-| *(VD: Images not optimized)* | *(VD: Compress images, add width/height attributes)* |
-| | |
-
-**Kết quả sau khi tối ưu:**
+**Result on Desktop:**
 
 | Metric | Điểm |
 |---|---|
-| Performance | *(điểm)* |
-| Accessibility | *(điểm)* |
-| Best Practices | *(điểm)* |
-| SEO | *(điểm)* |
+| Performance | 100 |
+| Accessibility | 95 |
+| Best Practices | 100 |
+| SEO | 100 |
 
-*(Chèn ảnh chụp màn hình Lighthouse — sau)*
+![Lighthouse on Desktop](public/lighthouse-desktop.png)
 
 ### (b) Track errors and user behaviors
 
-> Mô tả cách nhóm đã cài đặt và cấu hình các công cụ monitoring.
+> Mô tả cách cài đặt và cấu hình các công cụ monitoring.
 
-**Google Analytics:**
-- [ ] Đã tích hợp
+**Simple Analytics:**
+- [x] Intergrated
 - **Tracking ID / Measurement ID:** `*(G-XXXXXXXXXX)*`
 - *(Mô tả ngắn cách tích hợp)*
 
 *(Chèn ảnh chụp màn hình Google Analytics dashboard)*
 
-**Sentry (hoặc tương đương):**
-- [ ] Đã tích hợp
-- **Tool sử dụng:** *(Sentry / ...)*
-- **Project DSN / Config:** *(link hoặc mô tả)*
-- *(Mô tả ngắn loại errors đang được monitor)*
+**Sentry:**
+- [x] Intergrated
+- **Project DSN / Config:** [*Project*](https://ho-thong.sentry.io/share/issue/47465699fe7d4b08bf4c084890e0697d/)
+- The type of error being monitored is client-side runtime error in Next.js.
+    - Specifically, the /sentry-example-page route has a test button. When clicked, the app actively throws an error:
+    - Error: Sentry example page test error
 
-*(Chèn ảnh chụp màn hình Sentry dashboard hoặc error log)*
+![Sentry dashboard](public/sentry-log.png)
 
 ---
-
-
 
 ## Task 5 — UI/UX Peer Review & Evaluation (Do Later)
 
