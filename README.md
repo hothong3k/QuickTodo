@@ -428,13 +428,13 @@ For guests, the same Todo UI works without database access. Guest todos are hand
 
 ---
 
-## Task 4 — Optimization (Do Later)
+## Task 4 — Optimization
 
 ### (a) Check performance with Lighthouse
 
 **Result on Mobile:**
 
-| Metric | Điểm |
+| Metric | Point |
 |---|---|
 | Performance | 99 |
 | Accessibility | 95 |
@@ -445,7 +445,7 @@ For guests, the same Todo UI works without database access. Guest todos are hand
 
 **Result on Desktop:**
 
-| Metric | Điểm |
+| Metric | Point |
 |---|---|
 | Performance | 100 |
 | Accessibility | 95 |
@@ -456,14 +456,12 @@ For guests, the same Todo UI works without database access. Guest todos are hand
 
 ### (b) Track errors and user behaviors
 
-> Mô tả cách cài đặt và cấu hình các công cụ monitoring.
-
-**Simple Analytics:**
+**Simple Analytics:** (Not yet)
 - [x] Intergrated
 - **Tracking ID / Measurement ID:** `*(G-XXXXXXXXXX)*`
-- *(Mô tả ngắn cách tích hợp)*
+- *(Describe briefly about intergration way)*
 
-*(Chèn ảnh chụp màn hình Google Analytics dashboard)*
+*(Screenshot Simple Analytics dashboard)*
 
 **Sentry:**
 - [x] Intergrated
@@ -480,41 +478,41 @@ For guests, the same Todo UI works without database access. Guest todos are hand
 
 ### (a) Feedbacks from other groups
 
-> Trình bày nội dung feedback nhóm đã gửi cho các nhóm được review.
+> Present the feedback that the group gave to the reviewed groups.
 
-**Nhóm được review #1:**
+**Reviewed group #1:**
 
-- **Tên nhóm / Dự án:** *(tên)*
-- **Link dự án:** *(link)*
+- **Group / Project name:** *(name)*
+- **Project link:** *(link)*
 
-| Khía cạnh | Điểm mạnh | Gợi ý cải thiện |
+| Aspect | Strengths | Suggestions for improvement |
 |---|---|---|
-| Usability | *(nhận xét)* | *(gợi ý)* |
-| Aesthetics | *(nhận xét)* | *(gợi ý)* |
-| User-Friendliness | *(nhận xét)* | *(gợi ý)* |
+| Usability | *(comment)* | *(suggestion)* |
+| Aesthetics | *(comment)* | *(suggestion)* |
+| User-Friendliness | *(comment)* | *(suggestion)* |
 
-**Nhóm được review #2:**
+**Reviewed group #2:**
 
-- **Tên nhóm / Dự án:** *(tên)*
-- **Link dự án:** *(link)*
+- **Group / Project name:** *(name)*
+- **Project link:** *(link)*
 
-| Khía cạnh | Điểm mạnh | Gợi ý cải thiện |
+| Aspect | Strengths | Suggestions for improvement |
 |---|---|---|
-| Usability | *(nhận xét)* | *(gợi ý)* |
-| Aesthetics | *(nhận xét)* | *(gợi ý)* |
-| User-Friendliness | *(nhận xét)* | *(gợi ý)* |
+| Usability | *(comment)* | *(suggestion)* |
+| Aesthetics | *(comment)* | *(suggestion)* |
+| User-Friendliness | *(comment)* | *(suggestion)* |
 
 ### (b) Solve feedbacks from other groups
 
-> Tóm tắt feedback nhóm nhận được và quyết định của nhóm đối với từng ý kiến.
+> Summarize the feedback received from other groups and the team's decision for each item.
 
-| Feedback | Nguồn (nhóm nào) | Quyết định | Lý do / Commit |
+| Feedback | Source group | Decision | Reason / Commit |
 |---|---|---|---|
-| *(mô tả feedback)* | *(tên nhóm)* | *(Đã implement / Không implement)* | *(lý do hoặc link commit)* |
+| *(feedback description)* | *(group name)* | *(Implemented / Not implemented)* | *(reason or commit link)* |
 | | | | |
 | | | | |
 
-*(Chèn ảnh chụp màn hình trước/sau của những thay đổi đã implement)*
+*(Add before/after screenshots for implemented feedback changes.)*
 
 ---
 
@@ -523,5 +521,5 @@ For guests, the same Todo UI works without database access. Guest todos are hand
 ## Deliverables Checklist
 
 - [x] **Source code trên GitHub** — repository public hoặc đã share với giảng viên
-- [ ] **README.md** bao gồm: hướng dẫn cài đặt, tổng quan project, danh sách tính năng có screenshots, ERD
+- [x] **README.md** bao gồm: hướng dẫn cài đặt, tổng quan project, danh sách tính năng có screenshots, ERD
 - [x] **Video demo** — tối đa 10 phút, tối thiểu 720p, không để private
