@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import ThemeProvider from "@/components/theme-provider";
 import NextAuthProvider from "@/components/session-provider";
 import Header from "@/components/header";
@@ -31,6 +32,7 @@ export default function RootLayout({
           </ThemeProvider>
         </NextAuthProvider>
       </body>
+      <Script src="https://scripts.simpleanalyticscdn.com/latest.js" />
     </html>
   );
 }
