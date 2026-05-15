@@ -9,10 +9,19 @@ interface TodoListProps {
   onUpdate: (id: string, title: string) => Promise<void>
   onUpdateDescription: (id: string, description: string) => Promise<void>
   onUpdateDueDate: (id: string, dueDate: string | null) => Promise<void>
+  onAddSubtask: (todoId: string, title: string) => Promise<void>
+  onToggleSubtask: (todoId: string, subtaskId: string) => Promise<void>
+  onUpdateSubtask: (
+    todoId: string,
+    subtaskId: string,
+    title: string
+  ) => Promise<void>
+  onDeleteSubtask: (todoId: string, subtaskId: string) => Promise<void>
   onDelete: (id: string) => Promise<void>
   onPriorityChange: (id: string, priority: number) => Promise<void>
   onRequireLoginForDescription: () => void
   onRequireLoginForDueDate: () => void
+  onRequireLoginForSubtask: () => void
 }
 
 export default function TodoList({
@@ -23,10 +32,15 @@ export default function TodoList({
   onUpdate,
   onUpdateDescription,
   onUpdateDueDate,
+  onAddSubtask,
+  onToggleSubtask,
+  onUpdateSubtask,
+  onDeleteSubtask,
   onDelete,
   onPriorityChange,
   onRequireLoginForDescription,
   onRequireLoginForDueDate,
+  onRequireLoginForSubtask,
 }: TodoListProps) {
   if (todos.length === 0) {
     return (
@@ -54,10 +68,15 @@ export default function TodoList({
           onUpdate={onUpdate}
           onUpdateDescription={onUpdateDescription}
           onUpdateDueDate={onUpdateDueDate}
+          onAddSubtask={onAddSubtask}
+          onToggleSubtask={onToggleSubtask}
+          onUpdateSubtask={onUpdateSubtask}
+          onDeleteSubtask={onDeleteSubtask}
           onDelete={onDelete}
           onPriorityChange={onPriorityChange}
           onRequireLoginForDescription={onRequireLoginForDescription}
           onRequireLoginForDueDate={onRequireLoginForDueDate}
+          onRequireLoginForSubtask={onRequireLoginForSubtask}
         />
       ))}
     </div>
