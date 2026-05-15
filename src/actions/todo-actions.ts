@@ -6,6 +6,7 @@ import { connectDB } from '@/lib/mongoose'
 import TodoModel from '@/models/Todo'
 import { revalidatePath } from 'next/cache'
 import { TODO_DESCRIPTION_MAX_LENGTH, TODO_TITLE_MAX_LENGTH } from '@/types'
+import { normalizeDueDate } from '@/lib/due-date'
 
 async function getUserId(): Promise<string | null> {
   const session = await getServerSession(authOptions)
@@ -55,6 +56,21 @@ export async function updateTodoDescription(id: string, description: string) {
   await TodoModel.findOneAndUpdate(
     { _id: id, userId },
     { description: cleanDescription }
+  )
+  revalidatePath('/todo')
+}
+
+// Cập nhật deadline todo
+export async function updateDueDate(id: string, dueDate: string | null) {
+  const cleanDueDate = normalizeDueDate(dueDate)
+  if (dueDate && !cleanDueDate) return
+
+  const userId = await getUserId()
+  if (!userId) throw new Error('Unauthorized')
+  await connectDB()
+  await TodoModel.findOneAndUpdate(
+    { _id: id, userId },
+    { dueDate: cleanDueDate }
   )
   revalidatePath('/todo')
 }
