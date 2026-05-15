@@ -11,9 +11,11 @@ import {
   toggleTodo,
   updateTodo,
   updateTodoDescription,
+  updateDueDate,
   deleteTodo,
   updatePriority,
 } from '@/actions/todo-actions'
+import { getCurrentDateString, getLocalDateString } from '@/lib/current-date'
 import {
   TODO_DESCRIPTION_MAX_LENGTH,
   TODO_TITLE_MAX_LENGTH,
@@ -45,11 +47,16 @@ export default function TodoClientWrapper({
   const [priorityFilters, setPriorityFilters] = useState<number[]>([])
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [authNotice, setAuthNotice] = useState('')
+  const [today, setToday] = useState(() => getLocalDateString())
   const filterRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const timer = window.setTimeout(() => setHydrated(true), 0)
     return () => window.clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    getCurrentDateString().then(setToday)
   }, [])
 
   // Đóng filter khi click ngoài
@@ -78,6 +85,10 @@ export default function TodoClientWrapper({
   }
 
   // --- Handlers cho người ĐÃ đăng nhập (gọi Server Actions) ---
+  const showLoginNotice = () => {
+    setAuthNotice('Hãy đăng nhập để dùng tính năng này')
+  }
+
   const handleAddAuth = async (title: string, priority: number) => {
     const cleanTitle = title.trim().slice(0, TODO_TITLE_MAX_LENGTH)
     if (!cleanTitle) return
@@ -88,6 +99,7 @@ export default function TodoClientWrapper({
       id: tempId, // id tạm, sẽ bị thay bằng re-fetch
       title: cleanTitle,
       description: '',
+      dueDate: null,
       isDone: false,
       priority: priority,
       createdAt: new Date(),
@@ -130,6 +142,15 @@ export default function TodoClientWrapper({
     await updateTodoDescription(id, cleanDescription)
   }
 
+  const handleDueDateAuth = async (id: string, dueDate: string | null) => {
+    if (id.startsWith('temp_')) return
+
+    setDbTodos((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, dueDate } : t))
+    )
+    await updateDueDate(id, dueDate)
+  }
+
   const handleDeleteAuth = async (id: string) => {
     if (id.startsWith('temp_')) return
     setDbTodos((prev) => prev.filter((t) => t.id !== id))
@@ -162,7 +183,11 @@ export default function TodoClientWrapper({
   }
 
   const handleDescriptionLocal = async () => {
-    showDescriptionLoginNotice()
+    showLoginNotice()
+  }
+
+  const handleDueDateLocal = async () => {
+    showLoginNotice()
   }
 
   const handleDeleteLocal = async (id: string) => {
@@ -256,12 +281,15 @@ export default function TodoClientWrapper({
         <TodoList
           todos={filteredTodos}
           isLoggedIn={isLoggedIn}
+          today={today}
           onToggle={handleToggleAuth}
           onUpdate={handleUpdateAuth}
           onUpdateDescription={handleDescriptionAuth}
+          onUpdateDueDate={handleDueDateAuth}
           onDelete={handleDeleteAuth}
           onPriorityChange={handlePriorityAuth}
           onRequireLoginForDescription={showDescriptionLoginNotice}
+          onRequireLoginForDueDate={showLoginNotice}
         />
       </div>
     )
@@ -371,12 +399,15 @@ export default function TodoClientWrapper({
       <TodoList
         todos={filteredStoreTodos}
         isLoggedIn={isLoggedIn}
+        today={today}
         onToggle={handleToggleLocal}
         onUpdate={handleUpdateLocal}
         onUpdateDescription={handleDescriptionLocal}
+        onUpdateDueDate={handleDueDateLocal}
         onDelete={handleDeleteLocal}
         onPriorityChange={handlePriorityLocal}
         onRequireLoginForDescription={showDescriptionLoginNotice}
+        onRequireLoginForDueDate={showLoginNotice}
       />
     </div>
   )
