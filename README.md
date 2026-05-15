@@ -456,21 +456,36 @@ For guests, the same Todo UI works without database access. Guest todos are hand
 
 ### (b) Track errors and user behaviors
 
-**Simple Analytics:** (Not yet)
+**Simple Analytics:**
 - [x] Intergrated
-- **Tracking ID / Measurement ID:** `*(G-XXXXXXXXXX)*`
-- *(Describe briefly about intergration way)*
+- Simple Analytics is integrated directly into src/app/layout.tsx using Next.js's Script component. The approach is concise:
+    - Import Script from next/script.
+    - Insert Simple Analytics' tracking script into the root layout.
+    - Since it's placed in the root layout, the script will be loaded across all pages of the app
 
-*(Screenshot Simple Analytics dashboard)*
+```tsx
+import Script from "next/script";
+
+<Script src="https://scripts.simpleanalyticscdn.com/latest.js" />
+```
+- This integration allows Simple Analytics to record basic page views and traffic without needing to add separate tracking code for each page."
+
+![Simple Analytics Dashboard](public/simple-analytics.png)
 
 **Sentry:**
 - [x] Intergrated
-- **Project DSN / Config:** [*Project*](https://ho-thong.sentry.io/share/issue/47465699fe7d4b08bf4c084890e0697d/)
-- The type of error being monitored is client-side runtime error in Next.js.
-    - Specifically, the /sentry-example-page route has a test button. When clicked, the app actively throws an error:
-    - Error: Sentry example page test error
+- **Project DSN / Config:** https://96e7d5200b4dc79f8f5037f5a6f3a1c5@o4511394738995200.ingest.de.sentry.io/4511394749349968
+- The type of error being monitored is server-side infrastructure/database connectivity error.
+    - Specifically, The app on Vercel is trying to connect to MongoDB via TLS, but the secureConnect step is timing out.
+    - This means the request fails to successfully reach the database within the allowed time, so the MongoDB driver throws an error
 
-![Sentry dashboard](public/sentry-log.png)
+```txt
+MongoNetworkTimeoutError
+Socket 'secureConnect' timed out
+connectTimeoutMS: 30000
+```
+
+![Error log](public/error-log.png)
 
 ---
 
