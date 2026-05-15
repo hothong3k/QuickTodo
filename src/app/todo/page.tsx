@@ -21,6 +21,7 @@ export default async function TodoPage() {
       id: String(t._id),
       title: t.title,
       description: t.description ?? '',
+      dueDate: t.dueDate ?? null,
       isDone: t.isDone ?? false,
       priority: t.priority ?? 4,
       createdAt: t.createdAt ?? new Date(),
