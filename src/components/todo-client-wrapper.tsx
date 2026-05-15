@@ -7,18 +7,25 @@ import TodoList from '@/components/todo-list'
 import { PRIORITY_CONFIG } from '@/components/priority-picker'
 import { useTodoStore } from '@/store/todo-store'
 import {
+  addSubtask,
   addTodo,
+  deleteSubtask,
   toggleTodo,
+  toggleSubtask,
   updateTodo,
   updateTodoDescription,
   updateDueDate,
   deleteTodo,
   updatePriority,
+  updateSubtask,
 } from '@/actions/todo-actions'
 import { getCurrentDateString, getLocalDateString } from '@/lib/current-date'
 import {
   TODO_DESCRIPTION_MAX_LENGTH,
   TODO_TITLE_MAX_LENGTH,
+  SUBTASK_MAX_COUNT,
+  SUBTASK_TITLE_MAX_LENGTH,
+  type Subtask,
   type Todo,
 } from '@/types'
 
@@ -100,6 +107,7 @@ export default function TodoClientWrapper({
       title: cleanTitle,
       description: '',
       dueDate: null,
+      subtasks: [],
       isDone: false,
       priority: priority,
       createdAt: new Date(),
@@ -151,6 +159,109 @@ export default function TodoClientWrapper({
     await updateDueDate(id, dueDate)
   }
 
+  const handleAddSubtaskAuth = async (todoId: string, title: string) => {
+    if (todoId.startsWith('temp_')) return
+    const cleanTitle = title.trim().slice(0, SUBTASK_TITLE_MAX_LENGTH)
+    if (!cleanTitle) return
+
+    const newSubtask: Subtask = {
+      id: `temp_subtask_${Date.now()}`,
+      title: cleanTitle,
+      isDone: false,
+      createdAt: new Date(),
+    }
+
+    setDbTodos((prev) =>
+      prev.map((todo) => {
+        if (todo.id !== todoId) return todo
+        const subtasks = todo.subtasks ?? []
+        if (subtasks.length >= SUBTASK_MAX_COUNT) return todo
+        return { ...todo, subtasks: [...subtasks, newSubtask] }
+      })
+    )
+    const savedSubtask = await addSubtask(todoId, cleanTitle)
+    setDbTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === todoId
+          ? {
+              ...todo,
+              subtasks: savedSubtask
+                ? (todo.subtasks ?? []).map((subtask) =>
+                    subtask.id === newSubtask.id ? savedSubtask : subtask
+                  )
+                : (todo.subtasks ?? []).filter(
+                    (subtask) => subtask.id !== newSubtask.id
+                  ),
+            }
+          : todo
+      )
+    )
+  }
+
+  const handleToggleSubtaskAuth = async (todoId: string, subtaskId: string) => {
+    if (todoId.startsWith('temp_') || subtaskId.startsWith('temp_subtask_')) return
+
+    setDbTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === todoId
+          ? {
+              ...todo,
+              subtasks: (todo.subtasks ?? []).map((subtask) =>
+                subtask.id === subtaskId
+                  ? { ...subtask, isDone: !subtask.isDone }
+                  : subtask
+              ),
+            }
+          : todo
+      )
+    )
+    await toggleSubtask(todoId, subtaskId)
+  }
+
+  const handleUpdateSubtaskAuth = async (
+    todoId: string,
+    subtaskId: string,
+    title: string
+  ) => {
+    if (todoId.startsWith('temp_') || subtaskId.startsWith('temp_subtask_')) return
+    const cleanTitle = title.trim().slice(0, SUBTASK_TITLE_MAX_LENGTH)
+    if (!cleanTitle) return
+
+    setDbTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === todoId
+          ? {
+              ...todo,
+              subtasks: (todo.subtasks ?? []).map((subtask) =>
+                subtask.id === subtaskId
+                  ? { ...subtask, title: cleanTitle }
+                  : subtask
+              ),
+            }
+          : todo
+      )
+    )
+    await updateSubtask(todoId, subtaskId, cleanTitle)
+  }
+
+  const handleDeleteSubtaskAuth = async (todoId: string, subtaskId: string) => {
+    if (todoId.startsWith('temp_') || subtaskId.startsWith('temp_subtask_')) return
+
+    setDbTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === todoId
+          ? {
+              ...todo,
+              subtasks: (todo.subtasks ?? []).filter(
+                (subtask) => subtask.id !== subtaskId
+              ),
+            }
+          : todo
+      )
+    )
+    await deleteSubtask(todoId, subtaskId)
+  }
+
   const handleDeleteAuth = async (id: string) => {
     if (id.startsWith('temp_')) return
     setDbTodos((prev) => prev.filter((t) => t.id !== id))
@@ -187,6 +298,10 @@ export default function TodoClientWrapper({
   }
 
   const handleDueDateLocal = async () => {
+    showLoginNotice()
+  }
+
+  const handleSubtaskLocal = async () => {
     showLoginNotice()
   }
 
@@ -286,10 +401,15 @@ export default function TodoClientWrapper({
           onUpdate={handleUpdateAuth}
           onUpdateDescription={handleDescriptionAuth}
           onUpdateDueDate={handleDueDateAuth}
+          onAddSubtask={handleAddSubtaskAuth}
+          onToggleSubtask={handleToggleSubtaskAuth}
+          onUpdateSubtask={handleUpdateSubtaskAuth}
+          onDeleteSubtask={handleDeleteSubtaskAuth}
           onDelete={handleDeleteAuth}
           onPriorityChange={handlePriorityAuth}
           onRequireLoginForDescription={showDescriptionLoginNotice}
           onRequireLoginForDueDate={showLoginNotice}
+          onRequireLoginForSubtask={showLoginNotice}
         />
       </div>
     )
@@ -404,10 +524,15 @@ export default function TodoClientWrapper({
         onUpdate={handleUpdateLocal}
         onUpdateDescription={handleDescriptionLocal}
         onUpdateDueDate={handleDueDateLocal}
+        onAddSubtask={handleSubtaskLocal}
+        onToggleSubtask={handleSubtaskLocal}
+        onUpdateSubtask={handleSubtaskLocal}
+        onDeleteSubtask={handleSubtaskLocal}
         onDelete={handleDeleteLocal}
         onPriorityChange={handlePriorityLocal}
         onRequireLoginForDescription={showDescriptionLoginNotice}
         onRequireLoginForDueDate={showLoginNotice}
+        onRequireLoginForSubtask={showLoginNotice}
       />
     </div>
   )
