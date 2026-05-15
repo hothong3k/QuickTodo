@@ -22,6 +22,12 @@ export default async function TodoPage() {
       title: t.title,
       description: t.description ?? '',
       dueDate: t.dueDate ?? null,
+      subtasks: (t.subtasks ?? []).map((subtask) => ({
+        id: subtask.id,
+        title: subtask.title,
+        isDone: subtask.isDone ?? false,
+        createdAt: subtask.createdAt ?? new Date(),
+      })),
       isDone: t.isDone ?? false,
       priority: t.priority ?? 4,
       createdAt: t.createdAt ?? new Date(),
