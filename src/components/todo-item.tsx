@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, type KeyboardEvent } from 'react'
+import DueDateBadge from '@/components/due-date-badge'
 import PriorityPicker, { getPriorityBorderClass } from '@/components/priority-picker'
 import {
+  CalendarDays,
   Check,
   FileText,
   Loader2,
@@ -17,16 +19,20 @@ import {
   TODO_TITLE_MAX_LENGTH,
   type Todo,
 } from '@/types'
+import { getDueDateStatus, normalizeDueDate } from '@/lib/due-date'
 
 interface TodoItemProps {
   todo: Todo
   isLoggedIn: boolean
+  today: string
   onToggle: (id: string) => Promise<void>
   onUpdate: (id: string, title: string) => Promise<void>
   onUpdateDescription: (id: string, description: string) => Promise<void>
+  onUpdateDueDate: (id: string, dueDate: string | null) => Promise<void>
   onDelete: (id: string) => Promise<void>
   onPriorityChange: (id: string, priority: number) => Promise<void>
   onRequireLoginForDescription: () => void
+  onRequireLoginForDueDate: () => void
 }
 
 function getDescriptionPreview(description?: string) {
@@ -41,22 +47,27 @@ function getDescriptionPreview(description?: string) {
 export default function TodoItem({
   todo,
   isLoggedIn,
+  today,
   onToggle,
   onUpdate,
   onUpdateDescription,
+  onUpdateDueDate,
   onDelete,
   onPriorityChange,
   onRequireLoginForDescription,
+  onRequireLoginForDueDate,
 }: TodoItemProps) {
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [editingTitle, setEditingTitle] = useState(false)
   const [editingDescription, setEditingDescription] = useState(false)
   const [editTitle, setEditTitle] = useState(todo.title)
   const [editDescription, setEditDescription] = useState(todo.description ?? '')
-  const [pendingAction, setPendingAction] = useState<'toggle' | 'delete' | 'title' | 'description' | null>(null)
+  const [editDueDate, setEditDueDate] = useState(todo.dueDate ?? '')
+  const [pendingAction, setPendingAction] = useState<'toggle' | 'delete' | 'title' | 'description' | 'dueDate' | null>(null)
 
   const borderClass = getPriorityBorderClass(todo.priority)
   const descriptionPreview = getDescriptionPreview(todo.description)
+  const dueDateStatus = getDueDateStatus(todo.dueDate, today, todo.isDone)
   const isPending = pendingAction !== null
 
   const withPending = async (
@@ -104,6 +115,33 @@ export default function TodoItem({
       await onUpdateDescription(todo.id, cleanDescription)
       setEditDescription(cleanDescription)
       setEditingDescription(false)
+    })
+  }
+
+  const handleDueDateSave = () => {
+    if (!isLoggedIn) {
+      onRequireLoginForDueDate()
+      return
+    }
+
+    const cleanDueDate = normalizeDueDate(editDueDate)
+    if (editDueDate && !cleanDueDate) return
+
+    withPending('dueDate', async () => {
+      await onUpdateDueDate(todo.id, cleanDueDate)
+      setEditDueDate(cleanDueDate ?? '')
+    })
+  }
+
+  const handleDueDateClear = () => {
+    if (!isLoggedIn) {
+      onRequireLoginForDueDate()
+      return
+    }
+
+    withPending('dueDate', async () => {
+      await onUpdateDueDate(todo.id, null)
+      setEditDueDate('')
     })
   }
 
@@ -212,6 +250,68 @@ export default function TodoItem({
           >
             {todo.title}
           </p>
+        )}
+      </section>
+
+      <section className="space-y-2">
+        <h3 className="text-sm font-semibold text-[var(--muted-foreground)]">
+          Mức độ ưu tiên & deadline
+        </h3>
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--background)] px-3 py-3">
+          <PriorityPicker
+            todoId={todo.id}
+            currentPriority={todo.priority}
+            onPriorityChange={(priority) => onPriorityChange(todo.id, priority)}
+          />
+          <span className="text-sm font-medium text-[var(--foreground)]">
+            Cấp {todo.priority}
+          </span>
+          <DueDateBadge status={dueDateStatus} />
+        </div>
+
+        {isLoggedIn ? (
+          <div className="space-y-2 rounded-lg border border-[var(--card-border)] bg-[var(--background)] px-3 py-3">
+            <label className="flex items-center gap-2 text-sm font-semibold text-[var(--muted-foreground)]">
+              <CalendarDays size={16} />
+              Due date
+            </label>
+            <div className="flex flex-wrap items-center gap-2">
+              <input
+                type="date"
+                value={editDueDate}
+                onChange={(e) => setEditDueDate(e.target.value)}
+                className="h-9 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-3 text-sm text-[var(--foreground)] outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <button
+                type="button"
+                onClick={handleDueDateSave}
+                disabled={pendingAction === 'dueDate' || editDueDate === (todo.dueDate ?? '')}
+                className="flex h-9 items-center gap-1.5 rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white transition-colors hover:bg-blue-500 disabled:opacity-50"
+              >
+                {pendingAction === 'dueDate' ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Save size={14} />
+                )}
+                Lưu
+              </button>
+              {todo.dueDate && (
+                <button
+                  type="button"
+                  onClick={handleDueDateClear}
+                  disabled={pendingAction === 'dueDate'}
+                  className="flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
+                >
+                  <X size={14} />
+                  Xóa
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-lg border border-[var(--card-border)] bg-[var(--background)] px-3 py-3 text-sm text-[var(--muted-foreground)]">
+            Hãy đăng nhập để đặt deadline.
+          </div>
         )}
       </section>
 
@@ -329,6 +429,8 @@ export default function TodoItem({
         </button>
 
         <div className="flex shrink-0 items-center gap-1">
+          <DueDateBadge status={dueDateStatus} />
+
           <PriorityPicker
             todoId={todo.id}
             currentPriority={todo.priority}
