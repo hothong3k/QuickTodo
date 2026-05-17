@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState, type KeyboardEvent } from 'react'
 import DueDateBadge from '@/components/due-date-badge'
 import PriorityPicker, { getPriorityBorderClass } from '@/components/priority-picker'
@@ -375,11 +376,6 @@ export default function TodoItem({
           Mức độ ưu tiên & deadline
         </h3>
         <div className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--background)] px-3 py-3">
-          <PriorityPicker
-            todoId={todo.id}
-            currentPriority={todo.priority}
-            onPriorityChange={(priority) => onPriorityChange(todo.id, priority)}
-          />
           <span className="text-sm font-medium text-[var(--foreground)]">
             Cấp {todo.priority}
           </span>
@@ -427,7 +423,14 @@ export default function TodoItem({
           </div>
         ) : (
           <div className="rounded-lg border border-[var(--card-border)] bg-[var(--background)] px-3 py-3 text-sm text-[var(--muted-foreground)]">
-            Hãy đăng nhập để đặt deadline.
+            Hãy{' '}
+            <Link
+              href="/auth/signin"
+              className="font-semibold underline underline-offset-2 transition-colors hover:text-[var(--foreground)]"
+            >
+              đăng nhập
+            </Link>{' '}
+            để đặt deadline.
           </div>
         )}
       </section>
@@ -670,7 +673,14 @@ export default function TodoItem({
           </div>
         ) : (
           <div className="rounded-lg border border-[var(--card-border)] bg-[var(--background)] px-3 py-3 text-sm text-[var(--muted-foreground)]">
-            Đăng nhập để dùng Todo phụ.
+            Hãy{' '}
+            <Link
+              href="/auth/signin"
+              className="font-semibold underline underline-offset-2 transition-colors hover:text-[var(--foreground)]"
+            >
+              đăng nhập
+            </Link>{' '}
+            để dùng Todo phụ.
           </div>
         )}
       </section>
