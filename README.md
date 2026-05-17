@@ -2,7 +2,6 @@
 
 ## About group
 
-| | |
 |---|---|
 | **Group Name** | The Baka |
 | **Project Name** | QuickTodo |
@@ -205,8 +204,8 @@ Commit messages follow the Conventional Commits format with Gitmoji:
 
 The website is built with the Next.js App Router. Each route has a focused role in the user flow, from introducing the product to managing todos and authentication.
 
-| Page | URL / Route | Description | Implementer |
-|---|---|---|---|
+| Page | URL / Route | Description
+|---|---|---|
 | Home | `/` | Landing page with QuickTodo introduction, main call-to-action buttons, feature cards, and a short usage guide.
 | Contact | `/contact` | Personal/about page with avatar, email, GitHub, LinkedIn, and navigation back to Home or Todo.
 | Todo | `/todo` | Main task management page. Guests use local browser storage, while logged-in users load and sync todos from MongoDB.
@@ -497,25 +496,25 @@ connectTimeoutMS: 30000
 
 **Reviewed group #1:**
 
-- **Group / Project name:** *(name)*
-- **Project link:** *(link)*
+- **Group / Project name:** Tracker_yourMoney
+- **Project link:** [Project](https://github.com/tducn110/Tracker_yourMoney)
 
 | Aspect | Strengths | Suggestions for improvement |
 |---|---|---|
-| Usability | *(comment)* | *(suggestion)* |
-| Aesthetics | *(comment)* | *(suggestion)* |
-| User-Friendliness | *(comment)* | *(suggestion)* |
+| Usability | Clear dashboard flow with quick add, budgets, goals, bills, transactions, wallets, and analytics. | Improve global search, mobile navigation, filters, and responsive layouts. |
+| Aesthetics | Modern interface with consistent cards, icons, colors, progress bars, and charts. | Reduce visual clutter from heavy gradients, shadows, emojis, and overly bold typography. |
+| User-Friendliness | 	Easy onboarding, Vietnamese labels, helpful quick-add examples, loading states, and feedback messages. | Clarify demo vs real Google login, fix placeholder links, improve accessibility, and make error messages more specific. |
 
 **Reviewed group #2:**
 
-- **Group / Project name:** *(name)*
-- **Project link:** *(link)*
+- **Group / Project name:** Calorie Web
+- **Project link:** [Project](https://github.com/nguyenduythaibao1611-eng/calorie-web.github.io)
 
 | Aspect | Strengths | Suggestions for improvement |
 |---|---|---|
-| Usability | *(comment)* | *(suggestion)* |
-| Aesthetics | *(comment)* | *(suggestion)* |
-| User-Friendliness | *(comment)* | *(suggestion)* |
+| Usability | Clear main flow: profile setup, dashboard, diary, and stats are easy to understand. | Add edit/delete actions for logged meals and stronger validation in settings. |
+| Aesthetics | 	Clean health-focused green palette, rounded cards, icons, and good mobile-first layout. | Add more visual contrast and reduce repeated green/white card styling. |
+| User-Friendliness | Bottom navigation, food search, and calorie/macro summaries make daily tracking simple. | Replace browser alerts with inline feedback, improve empty states, and expand accessibility support. |
 
 ### (b) Solve feedbacks from other groups
 
@@ -523,18 +522,14 @@ connectTimeoutMS: 30000
 
 | Feedback | Source group | Decision | Reason / Commit |
 |---|---|---|---|
-| *(feedback description)* | *(group name)* | *(Implemented / Not implemented)* | *(reason or commit link)* |
-| | | | |
-| | | | |
+| Guest mode: Cannot add subtask – error message lacks clear login guidance | Tracker_yourMoney | Implemented | PR #31 |
 
-*(Add before/after screenshots for implemented feedback changes.)*
-
+![Before](public/before-1.png)
+![After](public/After-1.png)
 ---
-
-
 
 ## Deliverables Checklist
 
-- [x] **Source code trên GitHub** — repository public hoặc đã share với giảng viên
-- [x] **README.md** bao gồm: hướng dẫn cài đặt, tổng quan project, danh sách tính năng có screenshots, ERD
-- [x] **Video demo** — tối đa 10 phút, tối thiểu 720p, không để private
+- [x] **Source code trên GitHub** — repository public or shared with lecturer
+- [x] **README.md** include: installation guide, project overview, features list with screenshots, ERD
+- [x] **Video demo** — maximum 10 phút, resolution minumum 720p, make it public
