@@ -2,8 +2,9 @@
 
 ## About group
 
-|---|---|
 | **Group Name** | The Baka |
+|---|---|
+| **Member Name** | Hồ Mai Duy Thống |
 | **Project Name** | QuickTodo |
 | **GitHub Repository** | https://github.com/hothong3k/QuickTodo |
 | **Video Demo** | https://drive.google.com/file/d/14TlHNwooYsrzDmoyMJQ6pkaVOBkVX0dY/view?usp=sharing |
@@ -146,8 +147,8 @@ Group has only one member - Duy Thống, who is in charge for: Frontend - Backen
 | Complete Frontend | 08/05 | Completed, right on time
 | Complete Backend | 08/05 | Completed, right on time
 | Add some features | 16/05 | Completed, right on time
-| Optimization & peer review | 17/05 | Ongoing
-| Submit | 22/05 | Ongoing |
+| Optimization & peer review | 19/05 | Ongoing
+| Submit | 20/05 | Ongoing |
 
 ### (d) GitHub Repository
 
@@ -431,22 +432,22 @@ For guests, the same Todo UI works without database access. Guest todos are hand
 
 ### (a) Check performance with Lighthouse
 
-**Result on Mobile:**
+**Result on Mobile (after adding Sentry & Simple Analytics):**
 
 | Metric | Point |
 |---|---|
-| Performance | 99 |
-| Accessibility | 95 |
+| Performance | 88 |
+| Accessibility | 96 |
 | Best Practices | 100 |
 | SEO | 100 |
 
 ![Lighthouse on Mobile](public/lighthouse-mobile.png)
 
-**Result on Desktop:**
+**Result on Desktop (after adding Sentry & Simple Analytics):**
 
 | Metric | Point |
 |---|---|
-| Performance | 100 |
+| Performance | 96 |
 | Accessibility | 95 |
 | Best Practices | 100 |
 | SEO | 100 |
@@ -492,8 +493,6 @@ connectTimeoutMS: 30000
 
 ### (a) Feedbacks from other groups
 
-> Present the feedback that the group gave to the reviewed groups.
-
 **Reviewed group #1:**
 
 - **Group / Project name:** Tracker_yourMoney
@@ -503,7 +502,7 @@ connectTimeoutMS: 30000
 |---|---|---|
 | Usability | Clear dashboard flow with quick add, budgets, goals, bills, transactions, wallets, and analytics. | Improve global search, mobile navigation, filters, and responsive layouts. |
 | Aesthetics | Modern interface with consistent cards, icons, colors, progress bars, and charts. | Reduce visual clutter from heavy gradients, shadows, emojis, and overly bold typography. |
-| User-Friendliness | 	Easy onboarding, Vietnamese labels, helpful quick-add examples, loading states, and feedback messages. | Clarify demo vs real Google login, fix placeholder links, improve accessibility, and make error messages more specific. |
+| User-Friendliness | Easy onboarding, Vietnamese labels, helpful quick-add examples, loading states, and feedback messages. | Clarify demo vs real Google login, fix placeholder links, improve accessibility, and make error messages more specific. |
 
 **Reviewed group #2:**
 
@@ -516,13 +515,33 @@ connectTimeoutMS: 30000
 | Aesthetics | 	Clean health-focused green palette, rounded cards, icons, and good mobile-first layout. | Add more visual contrast and reduce repeated green/white card styling. |
 | User-Friendliness | Bottom navigation, food search, and calorie/macro summaries make daily tracking simple. | Replace browser alerts with inline feedback, improve empty states, and expand accessibility support. |
 
-### (b) Solve feedbacks from other groups
+**Reviewed group #3:**
 
-> Summarize the feedback received from other groups and the team's decision for each item.
+- **Group / Project name:** WindTodo
+- **Project link:** [Project](https://github.com/TonyLikeDev/WindTodo-V1)
+
+| Aspect | Strengths | Suggestions for improvement |
+|---|---|---|
+| Usability | Clear workflow from login/signup to dashboard, projects, Kanban boards, tasks, and statistics. Drag-and-drop boards and quick task creation are practical for task management. | Add stronger onboarding/empty states and make mobile navigation easier to discover. |
+| Aesthetics | The sky/glassmorphism style gives WindTodo a modern, soft, and recognizable visual identity. Icons, cards, and animations make the interface feel polished. | Improve contrast consistency, especially where light text appears on glass or colored backgrounds. |
+| User-Friendliness | Useful features are included: task status, priority, assignees, project sharing, detailed task modal, and team statistics. | Add clearer feedback for errors/success states, tooltips for hidden hover actions, and finish flows like “Forgot password.” |
+
+**Reviewed group #4:**
+
+- **Group / Project name:** WorldWords
+- **Project link:** [Project](https://github.com/Dragons212122/WorldWords)
+
+| Aspect | Strengths | Suggestions for improvement |
+|---|---|---|
+| Usability | Clear learning flow from topic catalog to flashcards, quiz, bookmarks, notes, and progress tracking. | Make navigation labels more consistent, expose Quiz/Search more clearly, and reduce overly long instructional text. |
+| Aesthetics | Clean modern layout, strong card design, consistent green branding, good use of icons and imagery. | Fix broken text encoding, reduce oversized spacing/typography in some sections, and use more meaningful topic images instead of abstract gradients. |
+| User-Friendliness | Simple interactions such as card flipping, saving words, progress bars, and Vietnamese translations make learning approachable. | Add clearer feedback for demo/login states, improve accessibility labels/keyboard support, and ensure responsive layouts are polished on mobile. |
+
+### (b) Solve feedbacks from other groups
 
 | Feedback | Source group | Decision | Reason / Commit |
 |---|---|---|---|
-| Guest mode: Cannot add subtask – error message lacks clear login guidance | Tracker_yourMoney | Implemented | PR #31 |
+| Guest mode: Cannot add subtask – error message lacks clear login guidance | Tracker_yourMoney | Implemented | [Commit](https://github.com/hothong3k/QuickTodo/pull/31/commits/d2f9b06302676334de1c303b4c793f8b9c282599) |
 
 ![Before](public/before-1.png)
 ![After](public/After-1.png)
@@ -532,4 +551,4 @@ connectTimeoutMS: 30000
 
 - [x] **Source code trên GitHub** — repository public or shared with lecturer
 - [x] **README.md** include: installation guide, project overview, features list with screenshots, ERD
-- [x] **Video demo** — maximum 10 phút, resolution minumum 720p, make it public
+- [x] **Video demo** — maximum 10 minutes, resolution minumum 720p, make it public
