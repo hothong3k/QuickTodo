@@ -184,15 +184,15 @@ export default function TodoClientWrapper({
       prev.map((todo) =>
         todo.id === todoId
           ? {
-              ...todo,
-              subtasks: savedSubtask
-                ? (todo.subtasks ?? []).map((subtask) =>
-                    subtask.id === newSubtask.id ? savedSubtask : subtask
-                  )
-                : (todo.subtasks ?? []).filter(
-                    (subtask) => subtask.id !== newSubtask.id
-                  ),
-            }
+            ...todo,
+            subtasks: savedSubtask
+              ? (todo.subtasks ?? []).map((subtask) =>
+                subtask.id === newSubtask.id ? savedSubtask : subtask
+              )
+              : (todo.subtasks ?? []).filter(
+                (subtask) => subtask.id !== newSubtask.id
+              ),
+          }
           : todo
       )
     )
@@ -205,13 +205,13 @@ export default function TodoClientWrapper({
       prev.map((todo) =>
         todo.id === todoId
           ? {
-              ...todo,
-              subtasks: (todo.subtasks ?? []).map((subtask) =>
-                subtask.id === subtaskId
-                  ? { ...subtask, isDone: !subtask.isDone }
-                  : subtask
-              ),
-            }
+            ...todo,
+            subtasks: (todo.subtasks ?? []).map((subtask) =>
+              subtask.id === subtaskId
+                ? { ...subtask, isDone: !subtask.isDone }
+                : subtask
+            ),
+          }
           : todo
       )
     )
@@ -231,13 +231,13 @@ export default function TodoClientWrapper({
       prev.map((todo) =>
         todo.id === todoId
           ? {
-              ...todo,
-              subtasks: (todo.subtasks ?? []).map((subtask) =>
-                subtask.id === subtaskId
-                  ? { ...subtask, title: cleanTitle }
-                  : subtask
-              ),
-            }
+            ...todo,
+            subtasks: (todo.subtasks ?? []).map((subtask) =>
+              subtask.id === subtaskId
+                ? { ...subtask, title: cleanTitle }
+                : subtask
+            ),
+          }
           : todo
       )
     )
@@ -251,11 +251,11 @@ export default function TodoClientWrapper({
       prev.map((todo) =>
         todo.id === todoId
           ? {
-              ...todo,
-              subtasks: (todo.subtasks ?? []).filter(
-                (subtask) => subtask.id !== subtaskId
-              ),
-            }
+            ...todo,
+            subtasks: (todo.subtasks ?? []).filter(
+              (subtask) => subtask.id !== subtaskId
+            ),
+          }
           : todo
       )
     )
@@ -425,14 +425,14 @@ export default function TodoClientWrapper({
       <div className="flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-sm text-amber-700 dark:text-amber-400">
         <span className="text-lg">💾</span>
         <span>
-          Dữ liệu đang CHỈ được lưu cục bộ tại trình duyệt này, và sẽ KHÔNG ĐỒNG BỘ sang thiết bị khác. Hãy{' '}
+          Dữ liệu chỉ được lưu CỤC BỘ tại trình duyệt này, và sẽ KHÔNG ĐỒNG BỘ sang thiết bị khác. Hãy{' '}
           <a
             href="/auth/signin"
             className="font-semibold underline underline-offset-2 transition-colors hover:text-amber-600 dark:hover:text-amber-300"
           >
             đăng nhập
           </a>{' '}
-          để đồng bộ dữ liệu và sử dụng trên nhiều thiết bị.
+          để đồng bộ dữ liệu và sử dụng các tính năng nâng cao.
         </span>
       </div>
 
