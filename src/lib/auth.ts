@@ -1,8 +1,7 @@
 import { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
-import clientPromise from '@/lib/mongodb-client'
+import { ResilientMongoDBAdapter } from '@/lib/resilient-mongodb-adapter'
 import { connectDB } from '@/lib/mongoose'
 import bcrypt from 'bcryptjs'
 
@@ -17,7 +16,7 @@ async function findUserByEmail(email: string) {
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: MongoDBAdapter(clientPromise),
+  adapter: ResilientMongoDBAdapter(),
 
   providers: [
     GoogleProvider({
