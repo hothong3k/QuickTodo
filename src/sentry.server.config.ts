@@ -18,12 +18,19 @@ Sentry.init({
 
     if (
       errorName === "MongoServerSelectionError" ||
+      errorName === "MongoNetworkTimeoutError" ||
+      errorMessage?.includes("ETIMEDOUT") ||
+      errorMessage?.includes("secureConnect") ||
       errorMessage?.includes("Server selection timed out")
     ) {
       event.tags = {
         ...event.tags,
         "db.system": "mongodb",
-        "db.error_type": "server_selection_timeout",
+        "db.error_type":
+          errorName === "MongoNetworkTimeoutError" ||
+          errorMessage?.includes("ETIMEDOUT")
+            ? "network_timeout"
+            : "server_selection_timeout",
         runtime: "server",
       };
     }
