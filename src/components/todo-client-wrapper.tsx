@@ -359,7 +359,7 @@ export default function TodoClientWrapper({
     )
 
     return (
-      <div className="flex flex-col gap-6">
+      <div className="todo-interaction-scope flex flex-col gap-6">
         {authNotice && (
           <div className="flex items-center justify-between gap-3 rounded-xl border border-blue-500/30 bg-blue-500/5 px-4 py-3 text-sm text-blue-700 dark:text-blue-300">
             <span>{authNotice}</span>
@@ -459,7 +459,7 @@ export default function TodoClientWrapper({
   )
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="todo-interaction-scope flex flex-col gap-6">
       {/* Banner nhắc nhở đăng nhập */}
       <div className="flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-sm text-amber-700 dark:text-amber-400">
         <span className="text-lg">💾</span>
