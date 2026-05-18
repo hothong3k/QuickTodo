@@ -13,7 +13,7 @@ export interface Todo {
   subtasks?: Subtask[]
   isDone: boolean
   priority: number
-  createdAt: Date
+  createdAt: Date | string
 }
 
 export const TODO_TITLE_MAX_LENGTH = 100
