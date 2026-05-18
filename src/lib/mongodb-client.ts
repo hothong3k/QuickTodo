@@ -1,11 +1,20 @@
 import { MongoClient, type MongoClientOptions } from 'mongodb'
 
 const mongoClientOptions: MongoClientOptions = {
+  appName: 'quicktodo',
   serverSelectionTimeoutMS: 10000,
   connectTimeoutMS: 10000,
   socketTimeoutMS: 45000,
+  timeoutMS: 15000,
   maxPoolSize: 10,
   minPoolSize: 0,
+  maxConnecting: 2,
+  maxIdleTimeMS: 60000,
+  waitQueueTimeoutMS: 10000,
+  heartbeatFrequencyMS: 10000,
+  serverMonitoringMode: 'poll',
+  retryReads: true,
+  retryWrites: true,
 }
 
 type MongoClientCache = {
@@ -50,7 +59,49 @@ export async function getMongoClient(): Promise<MongoClient> {
   }
 }
 
-// ClientPromise dùng cho NextAuth MongoDB Adapter
-const clientPromise: Promise<MongoClient> = getMongoClient()
+export function isMongoTransientError(error: unknown) {
+  if (!(error instanceof Error)) return false
+
+  return (
+    error.name === 'MongoServerSelectionError' ||
+    error.name === 'MongoNetworkError' ||
+    error.name === 'MongoNetworkTimeoutError' ||
+    error.message.includes('ETIMEDOUT') ||
+    error.message.includes('secureConnect') ||
+    error.message.includes('Server selection timed out')
+  )
+}
+
+export async function resetMongoClient() {
+  const client = cached.client
+  cached.client = null
+  cached.promise = null
+
+  if (client) {
+    await client.close(true).catch(() => undefined)
+  }
+}
+
+// Backward-compatible lazy promise for code that still expects clientPromise.
+// Avoid starting a MongoDB connection just by importing this module.
+const clientPromise = {
+  then<TResult1 = MongoClient, TResult2 = never>(
+    onfulfilled?:
+      | ((value: MongoClient) => TResult1 | PromiseLike<TResult1>)
+      | null,
+    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null
+  ) {
+    return getMongoClient().then(onfulfilled, onrejected)
+  },
+  catch<TResult = never>(
+    onrejected?: ((reason: unknown) => TResult | PromiseLike<TResult>) | null
+  ) {
+    return getMongoClient().catch(onrejected)
+  },
+  finally(onfinally?: (() => void) | null) {
+    return getMongoClient().finally(onfinally)
+  },
+  [Symbol.toStringTag]: 'Promise',
+} satisfies Promise<MongoClient>
 
 export default clientPromise
