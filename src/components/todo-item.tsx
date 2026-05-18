@@ -419,9 +419,13 @@ export default function TodoItem({
           Mức độ ưu tiên & deadline
         </h3>
         <div className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--background)] px-3 py-3">
-          <span className="text-sm font-medium text-[var(--foreground)]">
-            Cấp {todo.priority}
-          </span>
+          <PriorityPicker
+            todoId={todo.id}
+            currentPriority={todo.priority}
+            onPriorityChange={(priority) => onPriorityChange(todo.id, priority)}
+            buttonVariant="row"
+            popoverAlign="start"
+          />
           <DueDateBadge status={dueDateStatus} />
         </div>
 
@@ -807,22 +811,14 @@ export default function TodoItem({
       </div>
 
       {isDetailOpen && (
-        <div className={`${isDetailClosing ? 'detail-inline-exit' : 'detail-inline-enter'} grid md:hidden`}>
-          <div className="detail-inline-body rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4 shadow-sm">
-            {detailContent}
-          </div>
-        </div>
-      )}
-
-      {isDetailOpen && (
-        <div className="hidden md:block">
+        <div>
           <button
             type="button"
             aria-label="Đóng chi tiết"
             onClick={closeDetail}
             className={`no-press fixed inset-0 z-40 bg-black/20 ${isDetailClosing ? 'detail-backdrop-exit' : 'detail-backdrop-enter'}`}
           />
-          <aside className={`${isDetailClosing ? 'detail-drawer-exit' : 'detail-drawer-enter'} fixed right-0 top-0 z-50 h-dvh w-full max-w-md border-l border-[var(--card-border)] bg-[var(--card-bg)] p-6 shadow-2xl`}>
+          <aside className={`${isDetailClosing ? 'detail-drawer-exit' : 'detail-drawer-enter'} fixed right-0 top-0 z-50 h-dvh w-full overflow-y-auto border-l border-[var(--card-border)] bg-[var(--card-bg)] p-4 shadow-2xl sm:max-w-md sm:p-6`}>
             {detailContent}
           </aside>
         </div>
