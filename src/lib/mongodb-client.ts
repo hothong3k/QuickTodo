@@ -1,6 +1,12 @@
-import { MongoClient } from 'mongodb'
+import { MongoClient, type MongoClientOptions } from 'mongodb'
 
-const uri = process.env.MONGODB_URI!
+const mongoClientOptions: MongoClientOptions = {
+  serverSelectionTimeoutMS: 10000,
+  connectTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
+  maxPoolSize: 10,
+  minPoolSize: 0,
+}
 
 type MongoClientCache = {
   client: MongoClient | null
@@ -8,7 +14,6 @@ type MongoClientCache = {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var _mongoClientCache: MongoClientCache | undefined
 }
 
@@ -18,20 +23,34 @@ const cached: MongoClientCache = global._mongoClientCache ?? {
 }
 if (!global._mongoClientCache) global._mongoClientCache = cached
 
+function getMongoUri() {
+  const uri = process.env.MONGODB_URI
+
+  if (!uri) {
+    throw new Error('Missing MongoDB connection string. Set MONGODB_URI.')
+  }
+
+  return uri
+}
+
 export async function getMongoClient(): Promise<MongoClient> {
   if (cached.client) return cached.client
 
   if (!cached.promise) {
-    cached.promise = new MongoClient(uri).connect()
+    cached.promise = new MongoClient(getMongoUri(), mongoClientOptions).connect()
   }
 
-  cached.client = await cached.promise
-  return cached.client
+  try {
+    cached.client = await cached.promise
+    return cached.client
+  } catch (error) {
+    cached.promise = null
+    cached.client = null
+    throw error
+  }
 }
 
 // ClientPromise dùng cho NextAuth MongoDB Adapter
-const clientPromise: Promise<MongoClient> = (async () => {
-  return getMongoClient()
-})()
+const clientPromise: Promise<MongoClient> = getMongoClient()
 
 export default clientPromise
