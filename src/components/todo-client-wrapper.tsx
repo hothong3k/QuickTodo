@@ -34,12 +34,21 @@ interface TodoClientWrapperProps {
   initialTodos: Todo[] // Todos từ DB (nếu đã đăng nhập)
 }
 
+function sortTodos(todos: Todo[]) {
+  return [...todos].sort(
+    (a, b) =>
+      a.priority - b.priority ||
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  )
+}
+
 export default function TodoClientWrapper({
   isLoggedIn,
   initialTodos,
 }: TodoClientWrapperProps) {
   // Todos hiển thị: nếu đã login thì dùng initialTodos, nếu không thì dùng store
   const [dbTodos, setDbTodos] = useState<Todo[]>(initialTodos)
+  const [syncedInitialTodos, setSyncedInitialTodos] = useState(initialTodos)
 
   // Zustand store dùng cho người chưa đăng nhập
   const storeTodos = useTodoStore((s) => s.todos)
@@ -65,6 +74,11 @@ export default function TodoClientWrapper({
   useEffect(() => {
     getCurrentDateString().then(setToday)
   }, [])
+
+  if (syncedInitialTodos !== initialTodos) {
+    setSyncedInitialTodos(initialTodos)
+    setDbTodos(initialTodos)
+  }
 
   // Đóng filter khi click ngoài
   useEffect(() => {
@@ -113,12 +127,24 @@ export default function TodoClientWrapper({
       createdAt: new Date(),
     }
     setDbTodos((prev) =>
-      [newTodo, ...prev].sort(
-        (a, b) => a.priority - b.priority || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
+      sortTodos([newTodo, ...prev])
     )
 
-    await addTodo(cleanTitle, priority) // revalidatePath bên trong
+    try {
+      const savedTodo = await addTodo(cleanTitle, priority) // revalidatePath bên trong
+      setAuthNotice('')
+
+      setDbTodos((prev) => {
+        if (!savedTodo) return prev.filter((todo) => todo.id !== tempId)
+
+        return sortTodos(
+          prev.map((todo) => (todo.id === tempId ? savedTodo : todo))
+        )
+      })
+    } catch {
+      setDbTodos((prev) => prev.filter((todo) => todo.id !== tempId))
+      setAuthNotice('Không thể lưu todo. Vui lòng thử lại.')
+    }
   }
 
   const handleToggleAuth = async (id: string) => {
@@ -334,6 +360,19 @@ export default function TodoClientWrapper({
 
     return (
       <div className="flex flex-col gap-6">
+        {authNotice && (
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-blue-500/30 bg-blue-500/5 px-4 py-3 text-sm text-blue-700 dark:text-blue-300">
+            <span>{authNotice}</span>
+            <button
+              type="button"
+              onClick={() => setAuthNotice('')}
+              className="shrink-0 rounded-lg px-2 py-1 text-xs font-semibold hover:bg-blue-500/10"
+            >
+              Đóng
+            </button>
+          </div>
+        )}
+
         <div className="flex items-center gap-3">
           {/* Nút Menu - Bộ lọc mức độ */}
           <div className="relative" ref={filterRef}>
