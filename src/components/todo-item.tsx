@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react'
 import DueDateBadge from '@/components/due-date-badge'
 import PriorityPicker, { getPriorityBorderClass } from '@/components/priority-picker'
 import SubtaskProgressBadge from '@/components/subtask-progress-badge'
@@ -49,6 +49,8 @@ interface TodoItemProps {
   onRequireLoginForSubtask: () => void
 }
 
+const DETAIL_EXIT_ANIMATION_MS = 760
+
 function getDescriptionPreview(description?: string) {
   const cleanDescription = description?.trim() ?? ''
   if (!cleanDescription) return ''
@@ -77,6 +79,7 @@ export default function TodoItem({
   onRequireLoginForSubtask,
 }: TodoItemProps) {
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isDetailClosing, setIsDetailClosing] = useState(false)
   const [editingTitle, setEditingTitle] = useState(false)
   const [editingDescription, setEditingDescription] = useState(false)
   const [editTitle, setEditTitle] = useState(todo.title)
@@ -87,6 +90,7 @@ export default function TodoItem({
   const [editSubtaskTitle, setEditSubtaskTitle] = useState('')
   const [pendingAction, setPendingAction] = useState<'toggle' | 'delete' | 'title' | 'description' | 'dueDate' | 'addSubtask' | null>(null)
   const [pendingSubtaskId, setPendingSubtaskId] = useState<string | null>(null)
+  const detailCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const borderClass = getPriorityBorderClass(todo.priority)
   const descriptionPreview = getDescriptionPreview(todo.description)
@@ -94,6 +98,51 @@ export default function TodoItem({
   const subtasks = todo.subtasks ?? []
   const hasReachedSubtaskLimit = subtasks.length >= SUBTASK_MAX_COUNT
   const isPending = pendingAction !== null
+
+  useEffect(() => {
+    return () => {
+      if (detailCloseTimerRef.current) {
+        clearTimeout(detailCloseTimerRef.current)
+      }
+    }
+  }, [])
+
+  const clearDetailCloseTimer = () => {
+    if (detailCloseTimerRef.current) {
+      clearTimeout(detailCloseTimerRef.current)
+      detailCloseTimerRef.current = null
+    }
+  }
+
+  const resetDetailEditors = () => {
+    setEditingTitle(false)
+    setEditingDescription(false)
+    setEditingSubtaskId(null)
+    setEditSubtaskTitle('')
+  }
+
+  const openDetail = () => {
+    clearDetailCloseTimer()
+    setIsDetailClosing(false)
+    setIsDetailOpen(true)
+  }
+
+  const closeDetail = () => {
+    clearDetailCloseTimer()
+    setIsDetailClosing(true)
+    detailCloseTimerRef.current = setTimeout(() => {
+      setIsDetailOpen(false)
+      setIsDetailClosing(false)
+      resetDetailEditors()
+      detailCloseTimerRef.current = null
+    }, DETAIL_EXIT_ANIMATION_MS)
+  }
+
+  const handleCardClick = (event: MouseEvent<HTMLDivElement>) => {
+    const target = event.target instanceof Element ? event.target : null
+    if (target?.closest('button, a, input, textarea, select')) return
+    openDetail()
+  }
 
   const withPending = async (
     action: NonNullable<typeof pendingAction>,
@@ -289,13 +338,7 @@ export default function TodoItem({
         </div>
         <button
           type="button"
-          onClick={() => {
-            setIsDetailOpen(false)
-            setEditingTitle(false)
-            setEditingDescription(false)
-            setEditingSubtaskId(null)
-            setEditSubtaskTitle('')
-          }}
+          onClick={closeDetail}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
           aria-label="Đóng chi tiết"
         >
@@ -690,7 +733,8 @@ export default function TodoItem({
   return (
     <>
       <div
-        className={`group flex items-center gap-4 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-4 shadow-sm transition-all duration-200 hover:shadow-md ${borderClass} ${
+        onClick={handleCardClick}
+        className={`todo-interactive-card group flex items-center gap-4 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-4 shadow-sm transition-all duration-200 hover:shadow-md ${borderClass} ${
           isPending ? 'opacity-50' : ''
         }`}
       >
@@ -709,7 +753,7 @@ export default function TodoItem({
 
         <button
           type="button"
-          onClick={() => setIsDetailOpen(true)}
+          onClick={openDetail}
           className="min-w-0 flex-1 text-left"
           aria-label="Mở chi tiết công việc"
         >
@@ -763,20 +807,22 @@ export default function TodoItem({
       </div>
 
       {isDetailOpen && (
-        <div className="lg:hidden rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4 shadow-sm">
-          {detailContent}
+        <div className={`${isDetailClosing ? 'detail-inline-exit' : 'detail-inline-enter'} grid md:hidden`}>
+          <div className="detail-inline-body rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4 shadow-sm">
+            {detailContent}
+          </div>
         </div>
       )}
 
       {isDetailOpen && (
-        <div className="hidden lg:block">
+        <div className="hidden md:block">
           <button
             type="button"
             aria-label="Đóng chi tiết"
-            onClick={() => setIsDetailOpen(false)}
-            className="fixed inset-0 z-40 bg-black/20"
+            onClick={closeDetail}
+            className={`no-press fixed inset-0 z-40 bg-black/20 ${isDetailClosing ? 'detail-backdrop-exit' : 'detail-backdrop-enter'}`}
           />
-          <aside className="fixed right-0 top-0 z-50 h-dvh w-full max-w-md border-l border-[var(--card-border)] bg-[var(--card-bg)] p-6 shadow-2xl">
+          <aside className={`${isDetailClosing ? 'detail-drawer-exit' : 'detail-drawer-enter'} fixed right-0 top-0 z-50 h-dvh w-full max-w-md border-l border-[var(--card-border)] bg-[var(--card-bg)] p-6 shadow-2xl`}>
             {detailContent}
           </aside>
         </div>
