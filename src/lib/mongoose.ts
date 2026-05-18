@@ -1,11 +1,20 @@
 import mongoose, { type ConnectOptions } from 'mongoose'
 
 const mongooseOptions: ConnectOptions = {
+  appName: 'quicktodo',
   serverSelectionTimeoutMS: 10000,
   connectTimeoutMS: 10000,
   socketTimeoutMS: 45000,
+  timeoutMS: 15000,
   maxPoolSize: 10,
   minPoolSize: 0,
+  maxConnecting: 2,
+  maxIdleTimeMS: 60000,
+  waitQueueTimeoutMS: 10000,
+  heartbeatFrequencyMS: 10000,
+  serverMonitoringMode: 'poll',
+  retryReads: true,
+  retryWrites: true,
 }
 
 type MongooseCache = {
@@ -20,6 +29,8 @@ declare global {
 const cached: MongooseCache = global._mongooseCache ?? { conn: null, promise: null }
 if (!global._mongooseCache) global._mongooseCache = cached
 
+mongoose.set('bufferCommands', false)
+
 function getMongoUri() {
   const uri = process.env.MONGODB_URI || process.env.MONGODB_URL
 
@@ -31,7 +42,12 @@ function getMongoUri() {
 }
 
 export async function connectDB() {
-  if (cached.conn) return cached.conn
+  if (cached.conn) {
+    if (cached.conn.connection.readyState === 1) return cached.conn
+
+    cached.conn = null
+    if (mongoose.connection.readyState === 0) cached.promise = null
+  }
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(getMongoUri(), mongooseOptions)
