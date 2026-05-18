@@ -15,6 +15,13 @@ export const metadata: Metadata = {
   title: "QuickTodo – Quản lý công việc nhanh gọn",
   description:
     "Không tải app linh tinh, không đăng nhập vẫn dùng được. Chỉ cần tập trung tạo nhanh task cho todolist thôi!",
+  icons: {
+    icon: [
+      { url: "/favicon.ico?v=2", type: "image/x-icon" },
+      { url: "/todo-favicon.ico?v=2", type: "image/x-icon" },
+    ],
+    shortcut: ["/favicon.ico?v=2"],
+  },
 };
 
 export default function RootLayout({
