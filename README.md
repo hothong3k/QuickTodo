@@ -527,7 +527,7 @@ Socket 'secureConnect' timed out
 connectTimeoutMS: 30000
 ```
 
-![Error log](public/error-log.png)
+![Error log](public/sentry-dashboard.png)
 
 ---
 
@@ -584,6 +584,7 @@ connectTimeoutMS: 30000
 | Feedback | Source group | Decision | Reason / Commit |
 |---|---|---|---|
 | Guest mode: Cannot add subtask – error message lacks clear login guidance | Tracker_yourMoney | Implemented | [Commit](https://github.com/hothong3k/QuickTodo/pull/31/commits/d2f9b06302676334de1c303b4c793f8b9c282599) |
+| Resolve Intermittent MongoNetworkTimeoutError in Production | WindTodo | Implemented | (Update commit later) |
 
 ![Before](public/before-1.png)
 ![After](public/After-1.png)
