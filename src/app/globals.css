@@ -36,6 +36,71 @@ body {
   transition: background-color 0.3s ease;
 }
 
+:where(button, a, [role="button"], summary) {
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(button, a, [role="button"], summary):not(:disabled):not([aria-disabled="true"]):not(.no-press):hover {
+    translate: 0 2px;
+    scale: 0.97;
+  }
+}
+
+:where(button, a, [role="button"], summary):not(:disabled):not([aria-disabled="true"]):not(.no-press):active {
+  translate: 0 3px;
+  scale: 0.94;
+}
+
+:where(button, a, [role="button"], summary):disabled,
+:where(button, a, [role="button"], summary)[aria-disabled="true"],
+:where(button, a, [role="button"], summary).no-press {
+  cursor: default;
+  translate: none;
+  scale: none;
+}
+
+:where(input, textarea, select) {
+  cursor: text;
+}
+
+.todo-interactive-card {
+  cursor: pointer;
+  transition-property: border-color, box-shadow, opacity, translate, scale;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .todo-interactive-card:hover {
+    translate: 0 2px;
+    scale: 0.99;
+  }
+}
+
+.todo-interactive-card:active {
+  translate: 0 3px;
+  scale: 0.98;
+}
+
+.todo-interaction-scope :where(
+  button:not(:disabled),
+  a[href],
+  [role="button"]:not([aria-disabled="true"]),
+  .todo-interactive-card,
+  [data-click-cursor-target]
+) {
+  cursor: pointer;
+}
+
+.todo-interaction-scope :where(input[type="date"], input[type="checkbox"]) {
+  cursor: pointer;
+}
+
 /* Smooth fade-in animation cho popover */
 @keyframes fadeIn {
   from {
@@ -50,6 +115,135 @@ body {
 
 .animate-in {
   animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes detailInlineEnter {
+  0% {
+    opacity: 0;
+    grid-template-rows: 0fr;
+    transform: translate3d(0, -18px, 0);
+  }
+  100% {
+    opacity: 1;
+    grid-template-rows: 1fr;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes detailInlineExit {
+  0% {
+    opacity: 1;
+    grid-template-rows: 1fr;
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    opacity: 0;
+    grid-template-rows: 0fr;
+    transform: translate3d(0, -18px, 0);
+  }
+}
+
+@keyframes detailBackdropEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes detailBackdropExit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes detailDrawerEnter {
+  0% {
+    opacity: 0.92;
+    transform: translate3d(100%, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes detailDrawerExit {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    opacity: 0.92;
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+.detail-inline-enter {
+  overflow: hidden;
+  animation: detailInlineEnter 1s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top center;
+  will-change: grid-template-rows, transform, opacity;
+}
+
+.detail-inline-exit {
+  overflow: hidden;
+  animation: detailInlineExit 0.72s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transform-origin: top center;
+  will-change: grid-template-rows, transform, opacity;
+}
+
+.detail-inline-body {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.detail-backdrop-enter {
+  animation: detailBackdropEnter 0.78s ease-out;
+}
+
+.detail-backdrop-exit {
+  animation: detailBackdropExit 0.55s ease-in forwards;
+}
+
+.detail-drawer-enter {
+  animation: detailDrawerEnter 1s cubic-bezier(0.16, 1, 0.3, 1);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.detail-drawer-exit {
+  animation: detailDrawerExit 0.72s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(button, a, [role="button"], summary) {
+    transition-duration: 0.01ms;
+  }
+
+  :where(button, a, [role="button"], summary):not(:disabled):not([aria-disabled="true"]):not(.no-press):hover,
+  :where(button, a, [role="button"], summary):not(:disabled):not([aria-disabled="true"]):not(.no-press):active,
+  .todo-interactive-card:hover,
+  .todo-interactive-card:active {
+    translate: none;
+    scale: none;
+  }
+
+  .animate-in,
+  .detail-inline-enter,
+  .detail-inline-exit,
+  .detail-backdrop-enter,
+  .detail-backdrop-exit,
+  .detail-drawer-enter,
+  .detail-drawer-exit {
+    animation: none;
+  }
 }
 
 /* Custom scrollbar cho dark mode */
