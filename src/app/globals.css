@@ -117,32 +117,6 @@ body {
   animation: fadeIn 0.15s ease-out;
 }
 
-@keyframes detailInlineEnter {
-  0% {
-    opacity: 0;
-    grid-template-rows: 0fr;
-    transform: translate3d(0, -18px, 0);
-  }
-  100% {
-    opacity: 1;
-    grid-template-rows: 1fr;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes detailInlineExit {
-  0% {
-    opacity: 1;
-    grid-template-rows: 1fr;
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    opacity: 0;
-    grid-template-rows: 0fr;
-    transform: translate3d(0, -18px, 0);
-  }
-}
-
 @keyframes detailBackdropEnter {
   from {
     opacity: 0;
@@ -183,25 +157,6 @@ body {
   }
 }
 
-.detail-inline-enter {
-  overflow: hidden;
-  animation: detailInlineEnter 1s cubic-bezier(0.16, 1, 0.3, 1);
-  transform-origin: top center;
-  will-change: grid-template-rows, transform, opacity;
-}
-
-.detail-inline-exit {
-  overflow: hidden;
-  animation: detailInlineExit 0.72s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  transform-origin: top center;
-  will-change: grid-template-rows, transform, opacity;
-}
-
-.detail-inline-body {
-  min-height: 0;
-  overflow: hidden;
-}
-
 .detail-backdrop-enter {
   animation: detailBackdropEnter 0.78s ease-out;
 }
@@ -236,8 +191,6 @@ body {
   }
 
   .animate-in,
-  .detail-inline-enter,
-  .detail-inline-exit,
   .detail-backdrop-enter,
   .detail-backdrop-exit,
   .detail-drawer-enter,
