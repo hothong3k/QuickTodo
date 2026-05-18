@@ -10,6 +10,7 @@ import {
   SUBTASK_TITLE_MAX_LENGTH,
   TODO_DESCRIPTION_MAX_LENGTH,
   TODO_TITLE_MAX_LENGTH,
+  type Todo,
 } from '@/types'
 import { normalizeDueDate } from '@/lib/due-date'
 
@@ -19,14 +20,25 @@ async function getUserId(): Promise<string | null> {
 }
 
 // Thêm todo mới
-export async function addTodo(title: string, priority: number = 4) {
+export async function addTodo(title: string, priority: number = 4): Promise<Todo | undefined> {
   const cleanTitle = title.trim().slice(0, TODO_TITLE_MAX_LENGTH)
   if (!cleanTitle) return
   const userId = await getUserId()
   if (!userId) throw new Error('Unauthorized')
   await connectDB()
-  await TodoModel.create({ title: cleanTitle, userId, priority })
+  const todo = await TodoModel.create({ title: cleanTitle, userId, priority })
   revalidatePath('/todo')
+
+  return {
+    id: String(todo._id),
+    title: todo.title,
+    description: todo.description ?? '',
+    dueDate: todo.dueDate ?? null,
+    subtasks: [],
+    isDone: todo.isDone ?? false,
+    priority: todo.priority ?? 4,
+    createdAt: todo.createdAt?.toISOString?.() ?? new Date().toISOString(),
+  }
 }
 
 // Đổi trạng thái hoàn thành
