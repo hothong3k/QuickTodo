@@ -60,9 +60,16 @@ interface PriorityPickerProps {
   todoId: string
   currentPriority: number
   onPriorityChange: (priority: number) => void
+  popoverAlign?: 'start' | 'end'
+  buttonVariant?: 'dot' | 'row'
 }
 
-export default function PriorityPicker({ todoId: _todoId, currentPriority, onPriorityChange }: PriorityPickerProps) {
+export default function PriorityPicker({
+  currentPriority,
+  onPriorityChange,
+  popoverAlign = 'end',
+  buttonVariant = 'dot',
+}: PriorityPickerProps) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
   const popoverRef = useRef<HTMLDivElement>(null)
@@ -92,25 +99,41 @@ export default function PriorityPicker({ todoId: _todoId, currentPriority, onPri
   }
 
   const dotClass = getPriorityDotClass(currentPriority)
+  const currentConfig = PRIORITY_CONFIG.find((p) => p.level === currentPriority)
+  const popoverAlignClass = popoverAlign === 'start' ? 'left-0' : 'right-0'
 
   return (
     <div className="relative" ref={popoverRef}>
       {/* Chấm màu ưu tiên – click để mở popover */}
-      <button
-        onClick={() => setOpen(!open)}
-        disabled={isPending}
-        className={`flex h-7 w-7 items-center justify-center rounded-full transition-all duration-200 hover:ring-2 hover:ring-offset-1 dark:hover:ring-offset-zinc-800 ${
-          PRIORITY_CONFIG.find((p) => p.level === currentPriority)?.ringColor ?? ''
-        }`}
-        aria-label="Chọn mức độ ưu tiên"
-        title="Đổi mức độ ưu tiên"
-      >
-        <span className={`block h-3 w-3 rounded-full ${dotClass} transition-colors`} />
-      </button>
+      {buttonVariant === 'row' ? (
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          disabled={isPending}
+          className="flex h-9 items-center gap-2 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-3 text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--muted)] disabled:opacity-50"
+          aria-label="Chọn mức độ ưu tiên"
+          title="Đổi mức độ ưu tiên"
+        >
+          <span className={`block h-3 w-3 shrink-0 rounded-full ${dotClass} transition-colors`} />
+          <span>{currentConfig?.label ?? `Cấp ${currentPriority}`}</span>
+        </button>
+      ) : (
+        <button
+          onClick={() => setOpen(!open)}
+          disabled={isPending}
+          className={`flex h-7 w-7 items-center justify-center rounded-full transition-all duration-200 hover:ring-2 hover:ring-offset-1 dark:hover:ring-offset-zinc-800 ${
+            currentConfig?.ringColor ?? ''
+          }`}
+          aria-label="Chọn mức độ ưu tiên"
+          title="Đổi mức độ ưu tiên"
+        >
+          <span className={`block h-3 w-3 rounded-full ${dotClass} transition-colors`} />
+        </button>
+      )}
 
       {/* Popover dropdown */}
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-64 animate-in fade-in slide-in-from-top-1 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-3 shadow-xl">
+        <div className={`absolute ${popoverAlignClass} top-full z-50 mt-2 w-64 max-w-[calc(100vw-2rem)] animate-in fade-in slide-in-from-top-1 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-3 shadow-xl`}>
           <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] opacity-80">
             Mức độ ưu tiên
           </p>
