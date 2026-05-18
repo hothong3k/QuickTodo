@@ -20,6 +20,7 @@ QuickTodo is a modern task management application (Todo List), focusing on smoot
 | Frontend | Next.js, React, TypeScript, Tailwind CSS, next-themes, Zustand (localStorage), lucide-react |
 | Backend | Next.js App Router, Server Actions, Route Handlers, NextAuth.js |
 | Database | MongoDB, Mongoose |
+| Analytics & Monitoring | Simple Analytics, Sentry |
 | Deploy | Vercel |
 
 **Main features:**
@@ -38,42 +39,72 @@ QuickTodo is a modern task management application (Todo List), focusing on smoot
 
 **System Requirements:**
 - Node.js 22 or higher.
-- A MongoDB account (Atlas) or a locally running MongoDB.
+- npm or pnpm.
+- A MongoDB Atlas database or a locally running MongoDB instance.
+- A NextAuth secret.
+- Google OAuth credentials if Google login is enabled.
+- Sentry project settings if error monitoring and source map uploads are enabled.
 
 **Installation**
-1.  **Clone repository**:
-    ```bash
-    git clone <repository-url>
-    cd quicktodo
-    ```
-2.  **Install dependencies**:
-    ```bash
-    npm install
-    ```
-3.  **Environment configuration**:
-    Create a `.env` file in the root directory and add the `DATABASE_URL` variable.
+1. **Clone repository**:
 
-    **For MongoDB Atlas (Cloud):**
-    ```env
-    DATABASE_URL="mongodb+srv://<user>:<password>@cluster.mongodb.net/todoDB?retryWrites=true&w=majority"
-    ```
+   ```bash
+   git clone <repository-url>
+   cd quicktodo
+   ```
 
-    **For Local MongoDB:**
-    If you are running MongoDB locally (standard installation):
-    ```env
-    DATABASE_URL="mongodb://localhost:27017/todoDB"
-    ```
+2. **Install dependencies**:
 
-    **For Local MongoDB (Docker):**
-    If you are using MongoDB with Docker:
-    ```env
-    DATABASE_URL="mongodb://root:password@localhost:27017/todoDB?authSource=admin"
-    ```
-4.  **Initialize Database**:
-    ```bash
-    npx prisma generate
-    npx prisma db push
-    ```
+   ```bash
+   npm install
+
+   # or
+   pnpm install
+   ```
+
+3. **Environment configuration**:
+
+   Create a `.env.local` file in the root directory. The final version uses MongoDB, NextAuth, Google OAuth, and Sentry.
+
+   ```env
+   # MongoDB
+   MONGODB_URI="mongodb+srv://<user>:<password>@<cluster>/<database>?retryWrites=true&w=majority"
+
+   # NextAuth
+   NEXTAUTH_URL="http://localhost:3000"
+   NEXTAUTH_SECRET="<random-secret>"
+
+   # Google OAuth
+   GOOGLE_CLIENT_ID="<google-client-id>"
+   GOOGLE_CLIENT_SECRET="<google-client-secret>"
+
+   # Sentry monitoring
+   NEXT_PUBLIC_SENTRY_DSN="<sentry-public-dsn>"
+   ```
+
+   **Local MongoDB example:**
+
+   ```env
+   MONGODB_URI="mongodb://localhost:27017/quicktodo"
+   ```
+
+   **Local MongoDB with Docker example:**
+
+   ```env
+   MONGODB_URI="mongodb://root:password@localhost:27017/quicktodo?authSource=admin"
+   ```
+
+4. **Database initialization**:
+
+   No Prisma or manual migration step is required. MongoDB collections are created automatically by Mongoose, NextAuth, and the registration/account flows when the app is used.
+
+   Main collections used by the final app:
+
+   - `todos`
+   - `users`
+   - `accounts`
+   - `sessions`
+   - `verification_tokens`
 
 **Running the Application**
 
@@ -83,36 +114,47 @@ To run the application in development mode:
 # npm
 npm run dev
 
-# yarn
-yarn dev
-
 # pnpm
 pnpm dev
 ```
 
-Open [http://localhost:3000] in your browser to experience it.
+Open [http://localhost:3000](http://localhost:3000) in your browser to experience it.
 
-To build the project for a production environment:
+To lint and build the project for production:
 
 ```bash
 # npm
+npm run lint
 npm run build
 npm start
 
-# yarn
-yarn build
-yarn start
-
 # pnpm
+pnpm lint
 pnpm build
 pnpm start
 ```
 
 **Deployment**
-The application can be easily deployed on platforms like Vercel:
-1. Connect the repository with Vercel.
-2. Add the `DATABASE_URL` environment variable.
-3. Vercel will automatically build and deploy the application.
+The application can be deployed on Vercel:
+
+1. Connect the GitHub repository to Vercel.
+2. Add the production environment variables in Vercel Project Settings:
+   - `MONGODB_URI`
+   - `NEXTAUTH_URL`
+   - `NEXTAUTH_SECRET`
+   - `GOOGLE_CLIENT_ID`
+   - `GOOGLE_CLIENT_SECRET`
+   - `NEXT_PUBLIC_SENTRY_DSN`
+   - `SENTRY_DSN`
+   - `SENTRY_ORG`
+   - `SENTRY_PROJECT`
+   - `SENTRY_AUTH_TOKEN`
+3. Set `NEXTAUTH_URL` to the production domain, for example `https://your-domain.vercel.app`.
+4. Add the same production callback URL in Google Cloud Console:
+   - `https://your-domain.vercel.app/api/auth/callback/google`
+5. Deploy with the default Vercel Next.js settings.
+
+Simple Analytics does not require environment variables because its tracking script is added directly in the root layout.
 
 ---
 
@@ -549,6 +591,6 @@ connectTimeoutMS: 30000
 
 ## Deliverables Checklist
 
-- [x] **Source code trên GitHub** — repository public or shared with lecturer
+- [x] **Source code on GitHub** — repository public or shared with lecturer
 - [x] **README.md** include: installation guide, project overview, features list with screenshots, ERD
 - [x] **Video demo** — maximum 10 minutes, resolution minumum 720p, make it public
