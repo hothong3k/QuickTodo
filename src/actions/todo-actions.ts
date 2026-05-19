@@ -92,7 +92,7 @@ export async function updateDueDate(id: string, dueDate: string | null) {
   revalidatePath('/todo')
 }
 
-// Thêm todo phụ
+// Thêm task phụ
 export async function addSubtask(todoId: string, title: string) {
   const cleanTitle = title.trim().slice(0, SUBTASK_TITLE_MAX_LENGTH)
   if (!cleanTitle) return
@@ -126,7 +126,7 @@ export async function addSubtask(todoId: string, title: string) {
   }
 }
 
-// Đổi trạng thái hoàn thành todo phụ
+// Đổi trạng thái hoàn thành task phụ
 export async function toggleSubtask(todoId: string, subtaskId: string) {
   const userId = await getUserId()
   if (!userId) throw new Error('Unauthorized')
@@ -143,7 +143,7 @@ export async function toggleSubtask(todoId: string, subtaskId: string) {
   revalidatePath('/todo')
 }
 
-// Cập nhật tiêu đề todo phụ
+// Cập nhật tiêu đề task phụ
 export async function updateSubtask(
   todoId: string,
   subtaskId: string,
@@ -167,7 +167,7 @@ export async function updateSubtask(
   revalidatePath('/todo')
 }
 
-// Xoá todo phụ
+// Xoá task phụ
 export async function deleteSubtask(todoId: string, subtaskId: string) {
   const userId = await getUserId()
   if (!userId) throw new Error('Unauthorized')
