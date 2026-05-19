@@ -4,32 +4,32 @@ import { useState, useRef, useEffect } from 'react'
 import { useTransition } from 'react'
 import { Check } from 'lucide-react'
 
-// Cấu hình 4 cấp ưu tiên theo giao diện
+// Cấu hình 4 mức ưu tiên theo giao diện
 export const PRIORITY_CONFIG = [
   {
     level: 1,
-    label: 'Cấp 1',
+    label: 'Mức 1',
     description: 'Rất quan trọng, khẩn cấp',
     color: 'bg-red-500',
     ringColor: 'ring-red-500/30',
   },
   {
     level: 2,
-    label: 'Cấp 2',
+    label: 'Mức 2',
     description: 'Quan trọng, cần làm sớm',
     color: 'bg-orange-500',
     ringColor: 'ring-orange-500/30',
   },
   {
     level: 3,
-    label: 'Cấp 3',
+    label: 'Mức 3',
     description: 'Bình thường, không gấp',
     color: 'bg-blue-500',
     ringColor: 'ring-blue-500/30',
   },
   {
     level: 4,
-    label: 'Cấp 4',
+    label: 'Mức 4',
     description: 'Không khẩn cấp',
     color: 'bg-zinc-400',
     ringColor: 'ring-zinc-400/30',
@@ -115,7 +115,7 @@ export default function PriorityPicker({
           title="Đổi mức độ ưu tiên"
         >
           <span className={`block h-3 w-3 shrink-0 rounded-full ${dotClass} transition-colors`} />
-          <span>{currentConfig?.label ?? `Cấp ${currentPriority}`}</span>
+          <span>{currentConfig?.label ?? `Mức ${currentPriority}`}</span>
         </button>
       ) : (
         <button
