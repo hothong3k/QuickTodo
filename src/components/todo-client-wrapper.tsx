@@ -77,7 +77,7 @@ export default function TodoClientWrapper({
 
   useEffect(() => {
     let isMounted = true
-    let nextDateTimer: ReturnType<typeof window.setTimeout> | null = null
+    let nextDateTimer: number | null = null
 
     const refreshToday = async () => {
       const currentDate = await getCurrentDateString()
