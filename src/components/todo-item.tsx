@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react'
 import DueDateBadge from '@/components/due-date-badge'
 import PriorityPicker, { getPriorityBorderClass } from '@/components/priority-picker'
 import SubtaskProgressBadge from '@/components/subtask-progress-badge'
@@ -49,7 +49,7 @@ interface TodoItemProps {
   onRequireLoginForSubtask: () => void
 }
 
-const DETAIL_EXIT_ANIMATION_MS = 760
+const DETAIL_EXIT_ANIMATION_MS = 220
 
 function getDescriptionPreview(description?: string) {
   const cleanDescription = description?.trim() ?? ''
@@ -92,8 +92,11 @@ export default function TodoItem({
   const [pendingAction, setPendingAction] = useState<'toggle' | 'delete' | 'title' | 'description' | 'dueDate' | 'addSubtask' | null>(null)
   const [pendingSubtaskId, setPendingSubtaskId] = useState<string | null>(null)
   const detailCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const detailTriggerRef = useRef<HTMLButtonElement>(null)
+  const detailCloseButtonRef = useRef<HTMLButtonElement>(null)
 
   const borderClass = getPriorityBorderClass(todo.priority)
+  const detailTitleId = `todo-detail-title-${todo.id}`
   const descriptionText = todo.description?.trim() ?? ''
   const descriptionPreview = getDescriptionPreview(todo.description)
   const dueDateStatus = getDueDateStatus(todo.dueDate, today, todo.isDone)
@@ -122,36 +125,76 @@ export default function TodoItem({
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isDeleteConfirmOpen, pendingAction])
 
-  const clearDetailCloseTimer = () => {
+  useEffect(() => {
+    if (!isDetailOpen) return
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [isDetailOpen])
+
+  useEffect(() => {
+    if (!isDetailOpen || isDetailClosing) return
+
+    const frameId = requestAnimationFrame(() => {
+      detailCloseButtonRef.current?.focus()
+    })
+
+    return () => cancelAnimationFrame(frameId)
+  }, [isDetailOpen, isDetailClosing])
+
+  const clearDetailCloseTimer = useCallback(() => {
     if (detailCloseTimerRef.current) {
       clearTimeout(detailCloseTimerRef.current)
       detailCloseTimerRef.current = null
     }
-  }
+  }, [])
 
-  const resetDetailEditors = () => {
+  const resetDetailEditors = useCallback(() => {
     setEditingTitle(false)
     setEditingDescription(false)
     setEditingSubtaskId(null)
     setEditSubtaskTitle('')
-  }
+  }, [])
 
-  const openDetail = () => {
+  const openDetail = useCallback(() => {
     clearDetailCloseTimer()
     setIsDetailClosing(false)
     setIsDetailOpen(true)
-  }
+  }, [clearDetailCloseTimer])
 
-  const closeDetail = () => {
+  const closeDetail = useCallback(() => {
     clearDetailCloseTimer()
     setIsDetailClosing(true)
     detailCloseTimerRef.current = setTimeout(() => {
       setIsDetailOpen(false)
       setIsDetailClosing(false)
       resetDetailEditors()
+      detailTriggerRef.current?.focus()
       detailCloseTimerRef.current = null
     }, DETAIL_EXIT_ANIMATION_MS)
-  }
+  }, [clearDetailCloseTimer, resetDetailEditors])
+
+  useEffect(() => {
+    if (!isDetailOpen || isDeleteConfirmOpen) return
+
+    function handleEscape(event: globalThis.KeyboardEvent) {
+      if (event.key !== 'Escape') return
+
+      const target = event.target instanceof Element ? event.target : null
+      if (target?.closest('input, textarea, select, [contenteditable="true"]')) {
+        return
+      }
+
+      closeDetail()
+    }
+
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [closeDetail, isDetailOpen, isDeleteConfirmOpen])
 
   const handleCardClick = (event: MouseEvent<HTMLDivElement>) => {
     const target = event.target instanceof Element ? event.target : null
@@ -353,17 +396,21 @@ export default function TodoItem({
   }
 
   const detailContent = (
-    <div className="flex h-full flex-col gap-5">
+    <div className="detail-content-enter flex h-full flex-col gap-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+          <h2
+            id={detailTitleId}
+            className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]"
+          >
             Chi tiết công việc
-          </p>
+          </h2>
           <p className="mt-1 text-xs text-[var(--muted-foreground)]">
             Mức {todo.priority}
           </p>
         </div>
         <button
+          ref={detailCloseButtonRef}
           type="button"
           onClick={closeDetail}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
@@ -783,6 +830,7 @@ export default function TodoItem({
         </button>
 
         <button
+          ref={detailTriggerRef}
           type="button"
           onClick={openDetail}
           className="min-w-0 flex-1 text-left"
@@ -844,7 +892,12 @@ export default function TodoItem({
             onClick={closeDetail}
             className={`no-press fixed inset-0 z-40 bg-black/20 ${isDetailClosing ? 'detail-backdrop-exit' : 'detail-backdrop-enter'}`}
           />
-          <aside className={`${isDetailClosing ? 'detail-drawer-exit' : 'detail-drawer-enter'} fixed right-0 top-0 z-50 h-dvh w-full overflow-y-auto border-l border-[var(--card-border)] bg-[var(--card-bg)] p-4 shadow-2xl sm:max-w-md sm:p-6`}>
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={detailTitleId}
+            className={`${isDetailClosing ? 'detail-drawer-exit' : 'detail-drawer-enter'} fixed right-0 top-0 z-50 h-dvh w-full overflow-y-auto border-l border-[var(--card-border)] bg-[var(--card-bg)] p-4 shadow-2xl sm:max-w-md sm:p-6`}
+          >
             {detailContent}
           </aside>
         </div>
