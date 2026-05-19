@@ -25,7 +25,7 @@ QuickTodo is a modern task management application (Todo List), focusing on smoot
 
 **Main features:**
 
-- Make todo quickly and level it by 4 stage ( 1 - important - to 4 - not important - )
+- Make todo quickly and level it by 4 types: 1 - important - to 4 - not important
 - Quick filter todos by level
 - Add description to todos
 - Add due date to todos, deadline tags when set
@@ -33,7 +33,7 @@ QuickTodo is a modern task management application (Todo List), focusing on smoot
 
 ![Make quick todo and set level](public/feature-1.png)
 ![Level Filter](public/feature-2.png)
-![Add description, due date, deadline tags, subtasks](public/feature-5.png)
+![Add description, due date, deadline tags, subtasks](public/feature-3.png)
 
 ## System Installation and Deployment Guide
 
@@ -527,7 +527,7 @@ Socket 'secureConnect' timed out
 connectTimeoutMS: 30000
 ```
 
-![Error log](public/sentry-dashboard.png)
+![Sentry dashboard](public/sentry-dashboard.png)
 
 ---
 
@@ -554,7 +554,7 @@ connectTimeoutMS: 30000
 | Aspect | Strengths | Suggestions for improvement |
 |---|---|---|
 | Usability | Clear main flow: profile setup, dashboard, diary, and stats are easy to understand. | Add edit/delete actions for logged meals and stronger validation in settings. |
-| Aesthetics | 	Clean health-focused green palette, rounded cards, icons, and good mobile-first layout. | Add more visual contrast and reduce repeated green/white card styling. |
+| Aesthetics | Clean health-focused green palette, rounded cards, icons, and good mobile-first layout. | Add more visual contrast and reduce repeated green/white card styling. |
 | User-Friendliness | Bottom navigation, food search, and calorie/macro summaries make daily tracking simple. | Replace browser alerts with inline feedback, improve empty states, and expand accessibility support. |
 
 **Reviewed group #3:**
@@ -584,10 +584,12 @@ connectTimeoutMS: 30000
 | Feedback | Source group | Decision | Reason / Commit |
 |---|---|---|---|
 | Guest mode: Cannot add subtask – error message lacks clear login guidance | Tracker_yourMoney | Implemented | [Commit](https://github.com/hothong3k/QuickTodo/pull/31/commits/d2f9b06302676334de1c303b4c793f8b9c282599) |
-| Resolve Intermittent MongoNetworkTimeoutError in Production | WindTodo | Implemented | (Update commit later) |
+| Resolve Intermittent MongoNetworkTimeoutError in Production | WindTodo | Implemented | [Commit](https://github.com/hothong3k/QuickTodo/pull/38/commits/f5ee6c33a6f08710e393b2d5ad6a95731c5e224d) |
+| No confirmation dialog or undo option when deleting a task | CalorieWeb | Implemented | (Update commit later) |
 
 ![Before](public/before-1.png)
 ![After](public/After-1.png)
+![Delete Confirm box](public/delete-confirm.png)
 ---
 
 ## Deliverables Checklist
