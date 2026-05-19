@@ -7,8 +7,8 @@
 | **Member Name** | Hồ Mai Duy Thống |
 | **Project Name** | QuickTodo |
 | **GitHub Repository** | https://github.com/hothong3k/QuickTodo |
-| **Video Demo** | https://drive.google.com/file/d/14TlHNwooYsrzDmoyMJQ6pkaVOBkVX0dY/view?usp=sharing |
-| **Submit Date** | 27/05/2026 |
+| **Video Demo** | https://drive.google.com/file/d/1jOIaP1xa2uNe28dauTKgsC_Jfs1ww7QR/view?usp=sharing |
+| **Submit Date** | 21/05/2026 |
 
 ## Project Overview
 QuickTodo is a modern task management application (Todo List), focusing on smooth user experience, refined interface, and high performance. The application is designed to be minimalist, requiring no app downloads, suitable for personal use or feature demos. Users can either use some basic features when they are Guest, or logged in to use more advance features (add description, subtasks, due-date).
@@ -23,13 +23,15 @@ QuickTodo is a modern task management application (Todo List), focusing on smoot
 | Analytics & Monitoring | Simple Analytics, Sentry |
 | Deploy | Vercel |
 
+![Tech Stack Diagram](public/tech-stack-diagram.png)
+
 **Main features:**
 
-- Make todo quickly and level it by 4 types: 1 - important - to 4 - not important
+- Make todo quickly and level it by 4 types: From "1 - important" to "4 - not important"
 - Quick filter todos by level
-- Add description to todos
-- Add due date to todos, deadline tags when set
-- Add subtasks to todos, notify when all subtasks are done
+- Add description to todos (sign-in required)
+- Add due date to todos, deadline tags when set (sign-in required)
+- Add subtasks to todos, notify when all subtasks are done (sign-in required)
 
 ![Make quick todo and set level](public/feature-1.png)
 ![Level Filter](public/feature-2.png)
@@ -189,8 +191,8 @@ Group has only one member - Duy Thống, who is in charge for: Frontend - Backen
 | Complete Frontend | 08/05 | Completed, right on time
 | Complete Backend | 08/05 | Completed, right on time
 | Add some features | 16/05 | Completed, right on time
-| Optimization & peer review | 19/05 | Ongoing
-| Submit | 20/05 | Ongoing |
+| Optimization & peer review | 19/05 | Completed, right on time
+| Submit | 21/05 | Ongoing
 
 ### (d) GitHub Repository
 
@@ -466,7 +468,7 @@ For guests, the same Todo UI works without database access. Guest todos are hand
 **Dynamic data screenshots:**
 
 ![Todo page with dynamic data](public/feature-2.png)
-![Todo detail and interaction](public/feature-5.png)
+![Todo detail and interaction](public/feature-3.png)
 
 ---
 
@@ -474,42 +476,46 @@ For guests, the same Todo UI works without database access. Guest todos are hand
 
 ### (a) Check performance with Lighthouse
 
-**Result on Mobile (after adding Sentry & Simple Analytics):**
+**Result on Mobile:**
 
 | Metric | Point |
 |---|---|
-| Performance | 88 |
-| Accessibility | 96 |
-| Best Practices | 100 |
-| SEO | 100 |
-
-![Lighthouse on Mobile](public/lighthouse-mobile.png)
-
-**Result on Desktop (after adding Sentry & Simple Analytics):**
-
-| Metric | Point |
-|---|---|
-| Performance | 96 |
+| Performance | 91 |
 | Accessibility | 95 |
 | Best Practices | 100 |
 | SEO | 100 |
 
-![Lighthouse on Desktop](public/lighthouse-desktop.png)
+![Insights - Diagnostics](public/lighthouse-mobile1.png)
+![Contrast](public/lighthouse-mobile2.png)
+![Best Practices - SEO](public/lighthouse-mobile3.png)
+
+**Result on Desktop:**
+
+| Metric | Point |
+|---|---|
+| Performance | 98 |
+| Accessibility | 95 |
+| Best Practices | 100 |
+| SEO | 100 |
+
+![Diagnostics](public/lighthouse-desktop1.png)
+![Contrast](public/lighthouse-desktop2.png)
+![Best Practices - SEO](public/lighthouse-desktop3.png)
 
 ### (b) Track errors and user behaviors
 
 **Simple Analytics:**
 - [x] Intergrated
-- Simple Analytics is integrated directly into src/app/layout.tsx using Next.js's Script component. The approach is concise:
-    - Import Script from next/script.
-    - Insert Simple Analytics' tracking script into the root layout.
-    - Since it's placed in the root layout, the script will be loaded across all pages of the app
-
+- Simple Analytics is integrated directly into src/app/layout.tsx using Next.js's Script component:
 ```tsx
 import Script from "next/script";
 
 <Script src="https://scripts.simpleanalyticscdn.com/latest.js" />
 ```
+- The approach is concise:
+    - Import Script from next/script.
+    - Insert Simple Analytics' tracking script into the root layout.
+    - Since it's placed in the root layout, the script will be loaded across all pages of the app
 - This integration allows Simple Analytics to record basic page views and traffic without needing to add separate tracking code for each page."
 
 ![Simple Analytics Dashboard](public/simple-analytics.png)
@@ -517,18 +523,12 @@ import Script from "next/script";
 **Sentry:**
 - [x] Intergrated
 - **Project DSN / Config:** https://96e7d5200b4dc79f8f5037f5a6f3a1c5@o4511394738995200.ingest.de.sentry.io/4511394749349968
-- The type of error being monitored is server-side infrastructure/database connectivity error.
-    - Specifically, The app on Vercel is trying to connect to MongoDB via TLS, but the secureConnect step is timing out.
-    - This means the request fails to successfully reach the database within the allowed time, so the MongoDB driver throws an error
-
-```txt
-MongoNetworkTimeoutError
-Socket 'secureConnect' timed out
-connectTimeoutMS: 30000
-```
 
 ![Sentry dashboard](public/sentry-dashboard.png)
 
+- The type of error being monitored is server-side infrastructure/database connectivity error.
+    - Specifically, The app on Vercel is trying to connect to MongoDB via TLS, but the secureConnect step is timing out.
+    - This means the request fails to successfully reach the database within the allowed time, so the MongoDB driver throws an error
 ---
 
 ## Task 5 — UI/UX Peer Review & Evaluation (Do Later)
@@ -542,9 +542,9 @@ connectTimeoutMS: 30000
 
 | Aspect | Strengths | Suggestions for improvement |
 |---|---|---|
-| Usability | Clear dashboard flow with quick add, budgets, goals, bills, transactions, wallets, and analytics. | Improve global search, mobile navigation, filters, and responsive layouts. |
-| Aesthetics | Modern interface with consistent cards, icons, colors, progress bars, and charts. | Reduce visual clutter from heavy gradients, shadows, emojis, and overly bold typography. |
-| User-Friendliness | Easy onboarding, Vietnamese labels, helpful quick-add examples, loading states, and feedback messages. | Clarify demo vs real Google login, fix placeholder links, improve accessibility, and make error messages more specific. |
+| Usability | Clear navigation and practical finance workflows like quick add, budgets, transactions, and analytics. | Remove dev-only UI, improve empty states, and add clearer guidance when data or login is missing. |
+| Aesthetics | Modern dashboard style with strong spacing, readable cards, and useful color coding. | Make icon styles more consistent and reduce oversized spacing on data-heavy screens. |
+| User-Friendliness | Onboarding, quick chips, and AI input make the app easy to start using. | Improve mobile form flow and add clearer error/help messages for key actions. |
 
 **Reviewed group #2:**
 
@@ -553,9 +553,9 @@ connectTimeoutMS: 30000
 
 | Aspect | Strengths | Suggestions for improvement |
 |---|---|---|
-| Usability | Clear main flow: profile setup, dashboard, diary, and stats are easy to understand. | Add edit/delete actions for logged meals and stronger validation in settings. |
-| Aesthetics | Clean health-focused green palette, rounded cards, icons, and good mobile-first layout. | Add more visual contrast and reduce repeated green/white card styling. |
-| User-Friendliness | Bottom navigation, food search, and calorie/macro summaries make daily tracking simple. | Replace browser alerts with inline feedback, improve empty states, and expand accessibility support. |
+| Usability | Clear onboarding flow, simple diary layout, and quick access to meal logging. | Add a clearer empty state for the dashboard so first-time users do not see too much blank space. |
+| Aesthetics | Consistent green palette, soft cards, and strong typography create a clean health-focused feel. | Reduce large whitespace in some screens and add more visual balance above the fold. |
+| User-Friendliness | Bottom navigation, date controls, and quick-add buttons make core tasks easy to find. | Add short guidance or feedback after setup and when no meal/stat data exists yet. |
 
 **Reviewed group #3:**
 
@@ -564,9 +564,9 @@ connectTimeoutMS: 30000
 
 | Aspect | Strengths | Suggestions for improvement |
 |---|---|---|
-| Usability | Clear workflow from login/signup to dashboard, projects, Kanban boards, tasks, and statistics. Drag-and-drop boards and quick task creation are practical for task management. | Add stronger onboarding/empty states and make mobile navigation easier to discover. |
-| Aesthetics | The sky/glassmorphism style gives WindTodo a modern, soft, and recognizable visual identity. Icons, cards, and animations make the interface feel polished. | Improve contrast consistency, especially where light text appears on glass or colored backgrounds. |
-| User-Friendliness | Useful features are included: task status, priority, assignees, project sharing, detailed task modal, and team statistics. | Add clearer feedback for errors/success states, tooltips for hidden hover actions, and finish flows like “Forgot password.” |
+| Usability | Clear sidebar navigation and multiple views like Dashboard, Kanban, Calendar, Roadmap, and Backlog support common task workflows well. | Improve visual hierarchy and reduce empty space so key actions like adding tasks/projects stand out faster. |
+| Aesthetics | The soft glassmorphism style, pastel colors, icons, and cloud theme create a consistent and memorable identity. | Increase contrast and keep decorative clouds from overlapping important content. |
+| User-Friendliness | Familiar controls for status, assignee, priority, and dates make task management approachable.    | Add clearer feedback for drag-and-drop, filters, and form actions, especially when changes are saved or fail. |
 
 **Reviewed group #4:**
 
@@ -575,9 +575,9 @@ connectTimeoutMS: 30000
 
 | Aspect | Strengths | Suggestions for improvement |
 |---|---|---|
-| Usability | Clear learning flow from topic catalog to flashcards, quiz, bookmarks, notes, and progress tracking. | Make navigation labels more consistent, expose Quiz/Search more clearly, and reduce overly long instructional text. |
-| Aesthetics | Clean modern layout, strong card design, consistent green branding, good use of icons and imagery. | Fix broken text encoding, reduce oversized spacing/typography in some sections, and use more meaningful topic images instead of abstract gradients. |
-| User-Friendliness | Simple interactions such as card flipping, saving words, progress bars, and Vietnamese translations make learning approachable. | Add clearer feedback for demo/login states, improve accessibility labels/keyboard support, and ensure responsive layouts are polished on mobile. |
+| Usability | Clear main flow from Home → Gallery → Flashcards/Quiz, with progress indicators that help users know where they are. | Reduce excessive empty space on some pages and make secondary actions like Search/See Examples more obvious or functional. |
+| Aesthetics | Clean modern visual style, strong typography, consistent emerald branding, and attractive card-based layouts. | Some text is very small and spacing feels too wide on desktop; improve balance and readability. |
+| User-Friendliness | Flashcards, bookmarks, notes, quiz, and dashboard make the learning workflow practical and motivating. | Add clearer feedback after actions, short quiz explanations, and small onboarding hints for first-time users. |
 
 ### (b) Solve feedbacks from other groups
 
@@ -589,6 +589,7 @@ connectTimeoutMS: 30000
 
 ![Before](public/before-1.png)
 ![After](public/After-1.png)
+
 ![Delete Confirm box](public/delete-confirm.png)
 ---
 
