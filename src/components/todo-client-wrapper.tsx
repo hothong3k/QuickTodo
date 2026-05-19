@@ -19,7 +19,11 @@ import {
   updatePriority,
   updateSubtask,
 } from '@/actions/todo-actions'
-import { getCurrentDateString, getLocalDateString } from '@/lib/current-date'
+import {
+  getCurrentDateString,
+  getLocalDateString,
+  getMillisecondsUntilNextLocalDate,
+} from '@/lib/current-date'
 import {
   TODO_DESCRIPTION_MAX_LENGTH,
   TODO_TITLE_MAX_LENGTH,
@@ -72,7 +76,51 @@ export default function TodoClientWrapper({
   }, [])
 
   useEffect(() => {
-    getCurrentDateString().then(setToday)
+    let isMounted = true
+    let nextDateTimer: ReturnType<typeof window.setTimeout> | null = null
+
+    const refreshToday = async () => {
+      const currentDate = await getCurrentDateString()
+      if (isMounted) {
+        setToday(currentDate)
+      }
+    }
+
+    const scheduleNextDateRefresh = () => {
+      if (!isMounted) return
+
+      if (nextDateTimer) {
+        window.clearTimeout(nextDateTimer)
+      }
+
+      nextDateTimer = window.setTimeout(async () => {
+        await refreshToday()
+        if (isMounted) {
+          scheduleNextDateRefresh()
+        }
+      }, getMillisecondsUntilNextLocalDate())
+    }
+
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === 'visible') {
+        refreshToday()
+        scheduleNextDateRefresh()
+      }
+    }
+
+    refreshToday()
+    scheduleNextDateRefresh()
+    window.addEventListener('focus', refreshWhenVisible)
+    document.addEventListener('visibilitychange', refreshWhenVisible)
+
+    return () => {
+      isMounted = false
+      if (nextDateTimer) {
+        window.clearTimeout(nextDateTimer)
+      }
+      window.removeEventListener('focus', refreshWhenVisible)
+      document.removeEventListener('visibilitychange', refreshWhenVisible)
+    }
   }, [])
 
   if (syncedInitialTodos !== initialTodos) {
