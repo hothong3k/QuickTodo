@@ -37,7 +37,7 @@ export default function TodoForm({ onAdd }: TodoFormProps) {
     try {
       await onAdd(title, priority)
       setTitle('')
-      setPriority(4) // Reset về cấp 4 sau khi thêm
+      setPriority(4) // Reset về mức 4 sau khi thêm
     } finally {
       setIsPending(false)
     }
