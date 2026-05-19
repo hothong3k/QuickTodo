@@ -585,7 +585,7 @@ connectTimeoutMS: 30000
 |---|---|---|---|
 | Guest mode: Cannot add subtask – error message lacks clear login guidance | Tracker_yourMoney | Implemented | [Commit](https://github.com/hothong3k/QuickTodo/pull/31/commits/d2f9b06302676334de1c303b4c793f8b9c282599) |
 | Resolve Intermittent MongoNetworkTimeoutError in Production | WindTodo | Implemented | [Commit](https://github.com/hothong3k/QuickTodo/pull/38/commits/f5ee6c33a6f08710e393b2d5ad6a95731c5e224d) |
-| No confirmation dialog or undo option when deleting a task | CalorieWeb | Implemented | (Update commit later) |
+| No confirmation dialog or undo option when deleting a task | CalorieWeb | Implemented | [Commit](https://github.com/hothong3k/QuickTodo/pull/44/commits/d44b83d8ff00f51988059abefa5ec3c0a98eac1b) |
 
 ![Before](public/before-1.png)
 ![After](public/After-1.png)
