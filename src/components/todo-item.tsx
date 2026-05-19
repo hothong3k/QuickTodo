@@ -80,6 +80,7 @@ export default function TodoItem({
 }: TodoItemProps) {
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [isDetailClosing, setIsDetailClosing] = useState(false)
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
   const [editingTitle, setEditingTitle] = useState(false)
   const [editingDescription, setEditingDescription] = useState(false)
   const [editTitle, setEditTitle] = useState(todo.title)
@@ -93,6 +94,7 @@ export default function TodoItem({
   const detailCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const borderClass = getPriorityBorderClass(todo.priority)
+  const descriptionText = todo.description?.trim() ?? ''
   const descriptionPreview = getDescriptionPreview(todo.description)
   const dueDateStatus = getDueDateStatus(todo.dueDate, today, todo.isDone)
   const subtasks = todo.subtasks ?? []
@@ -106,6 +108,19 @@ export default function TodoItem({
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (!isDeleteConfirmOpen) return
+
+    function handleEscape(event: globalThis.KeyboardEvent) {
+      if (event.key === 'Escape' && pendingAction !== 'delete') {
+        setIsDeleteConfirmOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [isDeleteConfirmOpen, pendingAction])
 
   const clearDetailCloseTimer = () => {
     if (detailCloseTimerRef.current) {
@@ -157,7 +172,19 @@ export default function TodoItem({
   }
 
   const handleToggle = () => withPending('toggle', () => onToggle(todo.id))
-  const handleDelete = () => withPending('delete', () => onDelete(todo.id))
+  const handleDeleteClick = () => {
+    setIsDeleteConfirmOpen(true)
+  }
+
+  const handleDeleteCancel = () => {
+    if (pendingAction === 'delete') return
+    setIsDeleteConfirmOpen(false)
+  }
+
+  const handleDeleteConfirm = async () => {
+    await withPending('delete', () => onDelete(todo.id))
+    setIsDeleteConfirmOpen(false)
+  }
 
   const handleTitleSave = () => {
     const cleanTitle = editTitle.trim().slice(0, TODO_TITLE_MAX_LENGTH)
@@ -333,7 +360,7 @@ export default function TodoItem({
             Chi tiết công việc
           </p>
           <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            Cấp {todo.priority}
+            Mức {todo.priority}
           </p>
         </div>
         <button
@@ -358,7 +385,7 @@ export default function TodoItem({
               className="flex h-8 items-center gap-1.5 rounded-lg px-2 text-xs font-semibold text-blue-500 transition-colors hover:bg-blue-500/10"
             >
               <Pencil size={14} />
-              Sửa
+              {descriptionText ? 'Sửa' : 'Thêm'}
             </button>
           )}
         </div>
@@ -405,9 +432,8 @@ export default function TodoItem({
           </div>
         ) : (
           <p
-            className={`break-words text-lg font-bold text-[var(--foreground)] ${
-              todo.isDone ? 'line-through opacity-60' : ''
-            }`}
+            className={`break-words text-lg font-bold text-[var(--foreground)] ${todo.isDone ? 'line-through opacity-60' : ''
+              }`}
           >
             {todo.title}
           </p>
@@ -539,8 +565,13 @@ export default function TodoItem({
             </div>
           </div>
         ) : (
-          <p className="min-h-20 whitespace-pre-wrap break-words rounded-lg border border-[var(--card-border)] bg-[var(--background)] px-3 py-3 text-sm leading-6 text-[var(--foreground)]">
-            {todo.description?.trim() || 'Chưa có mô tả.'}
+          <p
+            className={`whitespace-pre-wrap break-words text-sm leading-6 ${descriptionText
+              ? 'text-[var(--foreground)]'
+              : 'text-[var(--muted-foreground)]'
+              }`}
+          >
+            {descriptionText || 'Chưa có mô tả.'}
           </p>
         )}
       </section>
@@ -548,7 +579,7 @@ export default function TodoItem({
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold text-[var(--muted-foreground)]">
-            Todo phụ
+            Task phụ
           </h3>
           <SubtaskProgressBadge subtasks={subtasks} />
         </div>
@@ -566,8 +597,8 @@ export default function TodoItem({
                 className="min-w-0 flex-1 rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-2 text-sm text-[var(--foreground)] outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50"
                 placeholder={
                   hasReachedSubtaskLimit
-                    ? 'Đã đạt giới hạn todo phụ'
-                    : 'Thêm todo phụ...'
+                    ? 'Đã đạt giới hạn task phụ'
+                    : 'Thêm task phụ...'
                 }
               />
               <button
@@ -592,7 +623,7 @@ export default function TodoItem({
             <div className="space-y-2">
               {subtasks.length === 0 ? (
                 <p className="rounded-lg border border-dashed border-[var(--card-border)] px-3 py-3 text-sm text-[var(--muted-foreground)]">
-                  Chưa có todo phụ.
+                  Chưa có task phụ.
                 </p>
               ) : (
                 subtasks.map((subtask) => {
@@ -608,15 +639,14 @@ export default function TodoItem({
                         type="button"
                         onClick={() => handleToggleSubtask(subtask.id)}
                         disabled={isSubtaskPending}
-                        className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all ${
-                          subtask.isDone
-                            ? 'border-emerald-500 bg-emerald-500 text-white'
-                            : 'border-[var(--card-border)] hover:border-emerald-500'
-                        } disabled:opacity-50`}
+                        className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all ${subtask.isDone
+                          ? 'border-emerald-500 bg-emerald-500 text-white'
+                          : 'border-[var(--card-border)] hover:border-emerald-500'
+                          } disabled:opacity-50`}
                         aria-label={
                           subtask.isDone
-                            ? 'Bỏ hoàn thành todo phụ'
-                            : 'Hoàn thành todo phụ'
+                            ? 'Bỏ hoàn thành task phụ'
+                            : 'Hoàn thành task phụ'
                         }
                       >
                         {subtask.isDone && <Check size={12} strokeWidth={3} />}
@@ -670,11 +700,10 @@ export default function TodoItem({
                       ) : (
                         <>
                           <span
-                            className={`min-w-0 flex-1 break-words text-sm leading-5 ${
-                              subtask.isDone
-                                ? 'text-[var(--muted-foreground)] line-through opacity-70'
-                                : 'text-[var(--foreground)]'
-                            }`}
+                            className={`min-w-0 flex-1 break-words text-sm leading-5 ${subtask.isDone
+                              ? 'text-[var(--muted-foreground)] line-through opacity-70'
+                              : 'text-[var(--foreground)]'
+                              }`}
                           >
                             {subtask.title}
                           </span>
@@ -686,7 +715,7 @@ export default function TodoItem({
                               }
                               disabled={isSubtaskPending}
                               className="flex h-7 w-7 items-center justify-center rounded-md text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted)] hover:text-blue-500 disabled:opacity-50"
-                              aria-label="Sửa todo phụ"
+                              aria-label="Sửa task phụ"
                             >
                               <Pencil size={13} />
                             </button>
@@ -695,7 +724,7 @@ export default function TodoItem({
                               onClick={() => handleSubtaskDelete(subtask.id)}
                               disabled={isSubtaskPending}
                               className="flex h-7 w-7 items-center justify-center rounded-md text-red-400/80 transition-colors hover:bg-red-500/10 hover:text-red-500 disabled:opacity-50"
-                              aria-label="Xóa todo phụ"
+                              aria-label="Xóa task phụ"
                             >
                               {isSubtaskPending ? (
                                 <Loader2 size={13} className="animate-spin" />
@@ -714,7 +743,7 @@ export default function TodoItem({
 
             {hasReachedSubtaskLimit && (
               <p className="text-xs text-[var(--muted-foreground)]">
-                Mỗi todo hỗ trợ tối đa {SUBTASK_MAX_COUNT} todo phụ.
+                Mỗi todo hỗ trợ tối đa {SUBTASK_MAX_COUNT} task phụ.
               </p>
             )}
           </div>
@@ -727,7 +756,7 @@ export default function TodoItem({
             >
               đăng nhập
             </Link>{' '}
-            để dùng Todo phụ.
+            để dùng Task phụ.
           </div>
         )}
       </section>
@@ -738,18 +767,16 @@ export default function TodoItem({
     <>
       <div
         onClick={handleCardClick}
-        className={`todo-interactive-card group flex items-center gap-4 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-4 shadow-sm transition-all duration-200 hover:shadow-md ${borderClass} ${
-          isPending ? 'opacity-50' : ''
-        }`}
+        className={`todo-interactive-card group flex items-center gap-4 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] px-4 py-4 shadow-sm transition-all duration-200 hover:shadow-md ${borderClass} ${isPending ? 'opacity-50' : ''
+          }`}
       >
         <button
           onClick={handleToggle}
           disabled={isPending}
-          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 transition-all duration-200 ${
-            todo.isDone
-              ? 'border-blue-500 bg-blue-500 text-white'
-              : 'border-[var(--card-border)] bg-[var(--background)] hover:border-blue-500'
-          }`}
+          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 transition-all duration-200 ${todo.isDone
+            ? 'border-blue-500 bg-blue-500 text-white'
+            : 'border-[var(--card-border)] bg-[var(--background)] hover:border-blue-500'
+            }`}
           aria-label={todo.isDone ? 'Bỏ đánh dấu hoàn thành' : 'Đánh dấu hoàn thành'}
         >
           {todo.isDone && <Check size={14} strokeWidth={3} />}
@@ -763,11 +790,10 @@ export default function TodoItem({
         >
           <span className="flex min-w-0 flex-wrap items-center gap-2">
             <span
-              className={`min-w-0 break-words text-base font-semibold transition-all duration-200 ${
-                todo.isDone
-                  ? 'text-[var(--muted-foreground)] line-through opacity-60'
-                  : 'text-[var(--foreground)]'
-              }`}
+              className={`min-w-0 break-words text-base font-semibold transition-all duration-200 ${todo.isDone
+                ? 'text-[var(--muted-foreground)] line-through opacity-60'
+                : 'text-[var(--foreground)]'
+                }`}
             >
               {todo.title}
             </span>
@@ -796,7 +822,7 @@ export default function TodoItem({
           />
 
           <button
-            onClick={handleDelete}
+            onClick={handleDeleteClick}
             disabled={isPending}
             className="flex h-8 w-8 items-center justify-center rounded-lg text-red-400/80 transition-colors hover:bg-red-500/10 hover:text-red-500"
             aria-label="Xoá"
@@ -821,6 +847,54 @@ export default function TodoItem({
           <aside className={`${isDetailClosing ? 'detail-drawer-exit' : 'detail-drawer-enter'} fixed right-0 top-0 z-50 h-dvh w-full overflow-y-auto border-l border-[var(--card-border)] bg-[var(--card-bg)] p-4 shadow-2xl sm:max-w-md sm:p-6`}>
             {detailContent}
           </aside>
+        </div>
+      )}
+
+      {isDeleteConfirmOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
+          <button
+            type="button"
+            aria-label="Đóng xác nhận xoá"
+            onClick={handleDeleteCancel}
+            className="absolute inset-0 bg-black/40"
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={`delete-title-${todo.id}`}
+            className="relative w-full max-w-sm rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5 shadow-2xl"
+          >
+            <h2
+              id={`delete-title-${todo.id}`}
+              className="text-base font-bold text-[var(--foreground)]"
+            >
+              Xoá todo?
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
+              Bạn có muốn xoá todo này không? Xoá rồi là không lấy lại được đâu đó!
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={handleDeleteCancel}
+                disabled={pendingAction === 'delete'}
+                className="flex h-9 items-center rounded-lg px-3 text-sm font-semibold text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
+              >
+                Không
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteConfirm}
+                disabled={pendingAction === 'delete'}
+                className="flex h-9 items-center gap-1.5 rounded-lg bg-red-600 px-3 text-sm font-semibold text-white transition-colors hover:bg-red-500 disabled:opacity-50"
+              >
+                {pendingAction === 'delete' && (
+                  <Loader2 size={14} className="animate-spin" />
+                )}
+                Có
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>
