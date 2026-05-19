@@ -10,15 +10,36 @@ function formatDateParts(parts: Intl.DateTimeFormatPart[]) {
   return `${values.year}-${values.month}-${values.day}`
 }
 
-export function getLocalDateString(timeZone = APP_TIME_ZONE) {
+export function getLocalDateString(timeZone = APP_TIME_ZONE, date = new Date()) {
   return formatDateParts(
     new Intl.DateTimeFormat('en-CA', {
       timeZone,
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
-    }).formatToParts(new Date())
+    }).formatToParts(date)
   )
+}
+
+export function getMillisecondsUntilNextLocalDate(
+  timeZone = APP_TIME_ZONE,
+  date = new Date()
+) {
+  const currentDate = getLocalDateString(timeZone, date)
+  const currentTime = date.getTime()
+  let start = currentTime
+  let end = currentTime + 48 * 60 * 60 * 1000
+
+  while (end - start > 1000) {
+    const middle = Math.floor((start + end) / 2)
+    if (getLocalDateString(timeZone, new Date(middle)) === currentDate) {
+      start = middle
+    } else {
+      end = middle
+    }
+  }
+
+  return Math.max(1000, end - currentTime + 1000)
 }
 
 export async function getCurrentDateString() {
