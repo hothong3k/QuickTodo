@@ -20,9 +20,9 @@ export default function SubtaskProgressBadge({
           ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
           : 'border-[var(--card-border)] bg-[var(--background)] text-[var(--muted-foreground)]'
       }`}
-      title="Tiến độ todo phụ"
+      title="Tiến độ task phụ"
     >
-      {doneCount}/{totalCount} Todo phụ
+      {doneCount}/{totalCount} Task phụ
     </span>
   )
 }
